@@ -1,6 +1,4 @@
 __pycache__/
-work_localPIT/
-work_inference/
 *.out
 *.err
 *.zip
@@ -14,26 +12,9 @@ sbi_logs/
 
 valdiags.egg-info/*
 
-
-saved_experiments/JR-NMM/**/Flows_amortized
-saved_experiments/JR-NMM/fixed_gain_3d/datasets_train.pkl
-saved_experiments/JR-NMM/fixed_gain_3d/lc2st_results
-saved_experiments/JR-NMM/fixed_gain_3d/lc2st_eval_clfs
-saved_experiments/JR-NMM/normal_4d/images_neurips
-saved_experiments/JR-NMM/normal_4d/old_experiments
-saved_experiments/JR-NMM/normal_4d/datasets_naive.pkl
-saved_experiments/JR-NMM/normal_4d/datasets_hnpe.pkl
-saved_experiments/JR-NMM/normal_4d/lct_results
-saved_experiments/JR-NMM/normal_4d/lc2st_results
-saved_experiments/JR-NMM/normal_4d/lc2st_eval_clfs
-
-saved_experiments/Gaussian1d/lc2st_eval_clfs/*.pkl
-
-
-saved_experiments/neurips_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lc2st_nf_probas_nt_1000_n_cal_10000.pkl
-saved_experiments/neurips_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/probas_null_dict.pkl
-saved_experiments/neurips_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd*.pkl
-
+saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lc2st_nf_probas_nt_1000_n_cal_10000.pkl
+saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/probas_null_dict.pkl
+saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd*.pkl
 saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/probas_null_dict.pkl
 saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lc2st_nf_probas_nt_1000_n_cal_10000.pkl
 saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd_r_alphas_nt_1000_n_cal_10000.pkl
@@ -49,50 +30,5 @@ saved_experiments/lc2st_2023/exp_2/*/npe_*/t_stats_null/*
 saved_experiments/lc2st_2023/exp_2/*/npe_*/results/*
 
 saved_experiments/lc2st_2023/exp_2/*/scatter_plots/data*.pkl
-saved_experiments/lc2st_2023/exp_3/npe_samples*.pkl
 
 saved_experiments/lc2st_2023/exp_3/local_tests/alpha_0.05_n_trials_null_1000/n_eval_10000_n_ensemble_1_cross_val_False/*lhpd*.pkl
-
-script_margaret_lc2st_stats_scatter_plots_sbibm.py
-script_margaret_sbibm_lc2st.py
-script_margaret_local_c2st.py
-script_margaret_localPIT_regression_old.py
-script_margaret_localPIT_multiLCT_JRNMM.py
-script_margaret_multiLCT_JRNMM.py
-script_margaret_trainHNPE_sim.py
-divergence-test.py
-lc2st_gaussian_shift.py
-lc2st_null_hyp_precision.py
-
-*_old.py
-notebooks/random_plots.ipynb
-notebooks/Toymodel_Timeseries.ipynb
-
-# remove all that is not in lc2st paper
-notebooks/*
-
-saved_experiments/Gaussian1d/*
-saved_experiments/Gaussian3D_multiPIT/*
-saved_experiments/c2st_evaluation/*
-saved_experiments/SBIGaussian2D/*
-saved_experiments/JR-NMM/fixed_gain_3d/*
-saved_experiments/JR-NMM/normal_4d/global_tests/*
-saved_experiments/JR-NMM/normal_4d/gt_observations/*
-saved_experiments/JR-NMM/normal_4d/lct_results/*
-saved_experiments/JR-NMM/normal_4d/r_alpha_learned/*
-saved_experiments/JR-NMM/normal_4d/datasets_naive_small.pkl
-saved_experiments/lc2st_2023/exp_2/lotka_volterra/*
-saved_experiments/lc2st_2023/exp_2/sir/*
-
-tasks/toy_examples/*
-
-valdiags/localPIT_regression.py
-valdiags/multi_local_test.py
-valdiags/posterior_correction.py
-valdiags/waldo_CRs.py
-
-c2st_emp_power_lee_2018_fig_2.py
-localPIT1D_test_scripts.py
-plot.py
-plots_neurips2022.py
-plot_posteriors_sbibm.py
