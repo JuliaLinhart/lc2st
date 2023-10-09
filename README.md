@@ -1,4 +1,4 @@
-# lc2st: local Classifier Two-Sample Tests
+# lc2st: local classifier two-sample tests
 Official code for [L-C2ST: Local Diagnostics for Posterior Approximations in
 Simulation-Based Inference](https://arxiv.org/abs/2306.03580)
 
