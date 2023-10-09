@@ -1,4 +1,4 @@
-# Validation Diagnostics for SBI-algorithms & Normalizing Flows
+# lc2st: local Classifier Two-Sample Tests
 Official code for [L-C2ST: Local Diagnostics for Posterior Approximations in
 Simulation-Based Inference](https://arxiv.org/abs/2306.03580)
 
