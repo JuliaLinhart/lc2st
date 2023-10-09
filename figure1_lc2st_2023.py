@@ -47,8 +47,6 @@ from valdiags.test_utils import eval_htest
 
 from plots_lc2st2023 import plot_plot_c2st_single_eval_shift
 
-# from sklearn.calibration import calibration_curve
-
 # ====== GLOBAL PARAMETERS ======
 
 # Path to save/load the results
@@ -67,9 +65,18 @@ USE_PERMUTATION = (
 
 # Test statistics
 METRICS = {
-    "accuracy": ["acc_ref", "acc_single_class",],
-    "mse": ["mse_ref", "mse_single_class",],
-    "div": ["max_ref", "max_single_class",],
+    "accuracy": [
+        "acc_ref",
+        "acc_single_class",
+    ],
+    "mse": [
+        "mse_ref",
+        "mse_single_class",
+    ],
+    "div": [
+        "max_ref",
+        "max_single_class",
+    ],
 }
 
 # ====== Parse arguments ======
@@ -78,7 +85,10 @@ parser = argparse.ArgumentParser()
 
 # Data parameters
 parser.add_argument(
-    "--dim", type=int, default=2, help="Dimension of the data (number of features).",
+    "--dim",
+    type=int,
+    default=2,
+    help="Dimension of the data (number of features).",
 )
 
 parser.add_argument(
@@ -275,50 +285,11 @@ if args.t_shift and not args.plot:
                     name = t_names[0]
                 test_stats[name].append(scores[metric])
 
-            # # calibration
-            # if b:
-            #     features = P_eval
-            #     y_true = np.zeros(len(P_eval))
-            #     label = "single_class"
-            # else:
-            #     features = np.concatenate([P_eval, Q_eval])
-            #     y_true = np.concatenate([np.zeros(len(P_eval)), np.ones(len(P_eval))])
-            #     label = "oracle"
-            # if args.opt_bayes:
-            #     clf = clf_list[i]
-            #     y_pred = clf.predict_proba(features)[:, 1]
-            # else:
-            #     y_pred = 1 - probas
-
-            # prob_true, prob_pred = calibration_curve(y_true, y_pred, n_bins=10)
-            # cal_curves[label].append((prob_true, prob_pred))
-            # print(prob_true, prob_pred)
-
     # Save computed test statistics
     torch.save(
         test_stats,
         PATH_EXPERIMENT + f"test_stats_{clf_name}_shift_{args.q_dist}_dim_{dim}.pkl",
     )
-
-    # # calibration curves
-    # for label in ["oracle"]:
-    #     for i, s in enumerate(shifts):
-    #         plt.plot(
-    #             cal_curves[label][i][0],
-    #             cal_curves[label][i][1],
-    #             label=f"scale shift = {s}",
-    #             linestyle="-",
-    #         )
-    #     plt.plot(
-    #         np.linspace(0, 1, 10), np.linspace(0, 1, 10), linestyle="--", color="black"
-    #     )
-    #     plt.legend()
-    #     plt.xlabel("True probability")
-    #     plt.ylabel("Predicted probability")
-    #     plt.ylim(0, 1)
-    #     plt.xlim(0, 1)
-    #     plt.title(f"Calibration curves, {label}-{clf_name}")
-    #     plt.show()
 
 
 # ====== EXP 2: EMPIRICAL POWER UNDER DISTRIBUTION SHIFT  ======
@@ -362,7 +333,8 @@ if args.power_shift and not args.plot:
             if os.path.exists(PATH_EXPERIMENT + "t_stats_null/" + filename):
                 # Load null scores if they exist ...
                 scores_null = np.load(
-                    PATH_EXPERIMENT + "t_stats_null/" + filename, allow_pickle=True,
+                    PATH_EXPERIMENT + "t_stats_null/" + filename,
+                    allow_pickle=True,
                 ).item()
             else:
                 # ... otherwise, compute them
@@ -398,7 +370,8 @@ if args.power_shift and not args.plot:
                 if not os.path.exists(PATH_EXPERIMENT + "t_stats_null/"):
                     os.makedirs(PATH_EXPERIMENT + "t_stats_null/")
                 np.save(
-                    PATH_EXPERIMENT + "t_stats_null/" + filename, scores_null,
+                    PATH_EXPERIMENT + "t_stats_null/" + filename,
+                    scores_null,
                 )
 
         else:

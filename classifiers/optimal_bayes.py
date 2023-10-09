@@ -11,15 +11,15 @@ from valdiags.vanillaC2ST import eval_c2st, compute_metric
 
 
 class OptimalBayesClassifier:
-    """Base classs for an optimal (binary) Bayes classifier to discriminate 
+    """Base classs for an optimal (binary) Bayes classifier to discriminate
     between data from two distributions associated to the classes c0 and c1:
-        
-        - X|c0 ~ P 
+
+        - X|c0 ~ P
         - X|c1 ~ Q
-    
+
     The optimal Bayes classifier is given by:
-                    
-        f(x) = argmax_{p(c0|x), p(c1|x)} \in {0,1} 
+
+        f(x) = argmax_{p(c0|x), p(c1|x)} \in {0,1}
 
     with p(c0|x) = p(x|c0) / (p(x|c0) + p(x|c1)) and p(c1|x) = 1 - p(c0|x).
 
@@ -50,7 +50,10 @@ class OptimalBayesClassifier:
         d = (self.dist_c0.pdf(x) / (self.dist_c0.pdf(x) + self.dist_c1.pdf(x))).reshape(
             -1, 1
         )
-        return np.concatenate([d, 1 - d], axis=1,)
+        return np.concatenate(
+            [d, 1 - d],
+            axis=1,
+        )
 
     def score(self, x, y):
         return np.mean(self.predict(x) == y)
@@ -62,7 +65,7 @@ class AnalyticGaussianLQDA(OptimalBayesClassifier):
 
         - c0: N(0, I)
         - c1: N(mu, sigma^2*I) with mu and sigma^2 to be specified.
-    
+
     """
 
     def __init__(self, dim, mu=0.0, sigma=1.0) -> None:
@@ -81,8 +84,8 @@ class AnalyticGaussianLQDA(OptimalBayesClassifier):
 
 class AnalyticStudentClassifier(OptimalBayesClassifier):
     """`OptimalBayesClassifier` between Normal and Student t distributions:
-        - c0: norm(loc=0, scale=1)
-        - c1: t(df=df, loc=mu, scale=sigma) with df, mu and sigma to be specified.
+    - c0: norm(loc=0, scale=1)
+    - c1: t(df=df, loc=mu, scale=sigma) with df, mu and sigma to be specified.
     """
 
     def __init__(self, mu=0, sigma=1, df=2) -> None:
@@ -110,7 +113,7 @@ def opt_bayes_scores(
             of size (n_samples, dim).
         clf (OptimalBayesClassifier): the initialized classifier to use.
             needs to have a `score` and `predict_proba` method.
-        metrics (list, optional): list of metric names (strings) to compute. 
+        metrics (list, optional): list of metric names (strings) to compute.
             Defaults to ["accuracy", "div", "mse"].
         single_class_eval (bool, optional): if True, the classifier is evaluated on P only.
             Defaults to True.
@@ -137,8 +140,6 @@ def opt_bayes_scores(
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-
-    from sklearn.calibration import calibration_curve
 
     N_SAMPLES = 10_000
     DIM = 5
@@ -221,7 +222,6 @@ if __name__ == "__main__":
             # clf = AnalyticStudentClassifier(df=s)
 
             for b in [True, False]:
-
                 # scores
                 scores = opt_bayes_scores(
                     P=ref_samples, Q=s_samples, clf=clf, single_class_eval=b
@@ -234,20 +234,6 @@ if __name__ == "__main__":
                     test_stats[r"$\hat{t}_{Acc}$"].append(scores["accuracy"])
                     test_stats[r"$\hat{t}_{Reg}$"].append(scores["mse"] + 0.5)
                     # test_stats[r"$\hat{t}_{Max}$"].append(scores["div"])
-
-                # calibration
-                if b:
-                    features = ref_samples
-                    y_true = np.zeros(N_SAMPLES)
-                    label = "single_class"
-                else:
-                    features = np.concatenate([ref_samples, s_samples])
-                    y_true = np.concatenate([np.zeros(N_SAMPLES), np.ones(N_SAMPLES)])
-                    label = "oracle"
-                y_pred = clf.predict_proba(features)[:, 1]
-                prob_true, prob_pred = calibration_curve(y_true, y_pred, n_bins=3)
-                cal_curves[label].append((prob_true, prob_pred))
-                print(prob_true, prob_pred)
 
         for k in test_stats.keys():
             test_stats_runs[k].append(test_stats[k])
@@ -293,7 +279,11 @@ if __name__ == "__main__":
             linestyle = "--"
         # plt.errorbar(shifts, test_stats_mean, color=color, label=name, linestyle=linestyle)
         plt.plot(
-            shifts, test_stats_mean[name], color=color, label=name, linestyle=linestyle,
+            shifts,
+            test_stats_mean[name],
+            color=color,
+            label=name,
+            linestyle=linestyle,
         )
         plt.fill_between(
             x=shifts,
@@ -315,26 +305,6 @@ if __name__ == "__main__":
     plt.title(f"Optimal Bayes Classifier for H_0: N(0, I) = N(0, s), dim={DIM}")
     plt.savefig(f"lqda_scale_shift_dim_{DIM}_n_{N_SAMPLES}.pdf")
     plt.show()
-
-    # calibration
-    for label in cal_curves.keys():
-        for i, s in enumerate(shifts):
-            plt.plot(
-                cal_curves[label][i][0],
-                cal_curves[label][i][1],
-                label=f"scale shift = {s}",
-                linestyle="-",
-            )
-        plt.plot(
-            np.linspace(0, 1, 10), np.linspace(0, 1, 10), linestyle="--", color="black"
-        )
-        plt.legend()
-        plt.xlabel("True probability")
-        plt.ylabel("Predicted probability")
-        plt.ylim(0, 1)
-        plt.xlim(0, 1)
-        plt.title("Calibration curves, " + label)
-        plt.show()
 
     # # DF-shift experiment plot
     # for name, color in zip(test_stats.keys(), colors):
