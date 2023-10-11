@@ -41,7 +41,6 @@ import sbibm
 
 from lc2st.vanillaC2ST import sbibm_clf_kwargs
 
-from precompute_test_statistics_null import precompute_t_stats_null
 from experiment_utils_sbibm import (
     l_c2st_results_n_train,
     compute_emp_power_l_c2st,
@@ -298,6 +297,7 @@ kwargs_lhpd = {
 # N.B> L-C2ST is still dependent on the observation space (x)
 # as its trained on the joint samples (theta, x)
 t_stats_null_c2st_nf = {ncal: None for ncal in n_cal_list}
+# from lc2st.test_utils import precompute_t_stats_null
 # if not args.plot:
 #     for n_cal in n_cal_list:
 #         t_stats_null_c2st_nf[n_cal] = precompute_t_stats_null(

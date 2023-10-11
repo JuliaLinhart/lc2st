@@ -22,7 +22,7 @@ from tasks.sbibm.data_generators import (
 )
 from tasks.sbibm.npe_utils import sample_from_npe_obs
 
-from precompute_test_statistics_null import precompute_t_stats_null
+from lc2st.test_utils import precompute_t_stats_null
 
 
 def l_c2st_results_n_train(

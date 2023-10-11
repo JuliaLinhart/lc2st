@@ -40,7 +40,7 @@ from lc2st.localC2ST import sbibm_clf_kwargs, lc2st_scores
 
 from tasks.jrnmm.prior import prior_JRNMM
 
-from precompute_test_statistics_null import precompute_t_stats_null
+from lc2st.test_utils import precompute_t_stats_null
 from experiment_utils_jrnmm import (
     train_posterior_jrnmm,
     generate_observations,
