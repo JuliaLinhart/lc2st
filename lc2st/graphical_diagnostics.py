@@ -1,5 +1,7 @@
 # Graphical diagnostics for the validation of conditional density estimators,
-# in particular in the context of SBI.
+# in particular in the context of SBI
+# - L-C2ST diagnostics
+# - plot estimated (vs. true) p.d.f.s
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,85 +14,21 @@ from matplotlib import cm
 from scipy.stats import uniform
 
 
-# ================= Plots pdfs ======================
-
-def multi_corner_plots(samples_list, legends, colors, title, **kwargs):
-    fig = None
-    for s, l, c in zip(samples_list, legends, colors):
-        fig = corner(s, legend=l, color=c, figure=fig, smooth=2, **kwargs)
-        plt.suptitle(title)
+# ==== Utility functions  ====
 
 
-def plot_distributions(dist_list, colors, labels, dim=1, hist=False):
-    if dim == 1:
-        for d, c, l in zip(dist_list, colors, labels):
-            plt.hist(
-                d, bins=100, color=c, alpha=0.3, density=True, label=l,
-            )
+def PP_vals(RV_samples, alphas):
+    """Compute the PP-values: empirical c.d.f. of a random variable (RV).
+    Used for Probability - Probabiity (P-P) plots.
 
-    elif dim == 2:
-        for d, c, l in zip(dist_list, colors, labels):
-            if not hist:
-                plt.scatter(
-                    d[:, 0], d[:, 1], color=c, alpha=0.3, label=l,
-                )
-            else:
-                plt.hist2d(
-                    d[:, 0].numpy(),
-                    d[:, 1].numpy(),
-                    bins=100,
-                    cmap=c,
-                    alpha=0.7,
-                    density=True,
-                    label=l,
-                )
-    else:
-        print("Not implemented.")
+    Args:
+        RV_samples (np.array): samples from the random variable.
+        alphas (list, np.array): alpha values to evaluate the c.d.f.
 
-
-## =============== plots for normalizing flows ==============================
-
-
-def flow_vs_reference_distribution(
-    samples_ref, samples_flow, z_space=True, dim=1, hist=False
-):
-    if z_space:
-        title = (
-            r"Base-Distribution vs. Inverse Flow-Transformation (of $\Theta \mid x_0$)"
-        )
-        labels = [
-            r"Ref: $\mathcal{N}(0,1)$",
-            r"NPE: $T_{\phi}^{-1}(\Theta;x_0) \mid x_0$",
-        ]
-    else:
-        title = r"True vs. Estimated distributions at $x_0$"
-        labels = [r"Ref: $p(\Theta \mid x_0)$", r"NPE: $p(T_{\phi}(Z;x_0))$"]
-
-    if hist:
-        colors = ["Blues", "Oranges"]
-    else:
-        colors = ["blue", "orange"]
-    plot_distributions(
-        [samples_ref, samples_flow], colors=colors, labels=labels, dim=dim, hist=hist,
-    )
-    plt.title(title)
-
-    if dim == 1:
-        plt.xlabel("z")
-        plt.xlim(-5, 5)
-
-    elif dim == 2:
-        plt.xlabel(r"$z_1$")
-        plt.ylabel(r"$z_2$")
-    plt.legend()
-
-
-
-# ==== General Functions applicable for both tests ====
-
-
-def PP_vals(RV_values, alphas):
-    pp_vals = [np.mean(RV_values <= alpha) for alpha in alphas]
+    Returns:
+        pp_vals (list): empirical c.d.f. values for each alpha.
+    """
+    pp_vals = [np.mean(RV_samples <= alpha) for alpha in alphas]
     return pp_vals
 
 
@@ -105,90 +43,31 @@ def confidence_region_null(alphas, N=1000, conf_alpha=0.05, n_trials=1000):
     plt.fill_between(alphas, lower_band, upper_band, color="grey", alpha=0.2)
 
 
-def box_plot_lc2st(
-    scores, scores_null, labels, colors, title=r"Box plot", conf_alpha=0.05
-):
-    import matplotlib.cbook as cbook
-
-    data = scores_null
-    stats = cbook.boxplot_stats(data)[0]
-    stats["q1"] = np.quantile(data, conf_alpha)
-    stats["q3"] = np.quantile(data, 1 - conf_alpha)
-    stats["whislo"] = min(data)
-    stats["whishi"] = max(data)
-
-    fig, ax = plt.subplots(1, 1, constrained_layout=True)
-    bp = ax.bxp([stats], widths=0.1, vert=False, showfliers=False, patch_artist=True)
-    bp["boxes"][0].set_facecolor("lightgray")
-    ax.set_label(r"95% confidence interval$")
-    ax.set_ylim(0.8, 1.2)
-    ax.set_xlim(stats["whislo"] - np.std(data), max(scores) + np.std(data))
-
-    for s, l, c in zip(scores, labels, colors):
-        plt.text(s, 0.9, l, color=c)
-        plt.scatter(s, 1, color=c, zorder=10)
-
-    fig.set_size_inches(5, 2)
-    plt.title(title)
+# ==== Diagnostics for L-C2ST ====
 
 
-# ==== 1. SBC: PP-plot for SBC validation method =====
-
-
-def sbc_plot(
-    sbc_ranks,
-    colors,
-    labels,
-    alphas=np.linspace(0, 1, 100),
-    confidence_int=True,
-    conf_alpha=0.05,
-    title="SBC",
-):
-    """PP-plot for SBC validation method:
-    Empirical distribution of the SBC ranks computed for every parameter seperately.
-
-    inputs:
-    - sbc_ranks: numpy array, size: (N, dim)
-        For example one can use the output of sbi.analysis.sbc.run_sbc computed on
-        N samples of the joint (Theta, X).
-    - colors: list of strings, length: dim
-    - labels: list of strings, length: dim
-    - alphas: numpy array, size: (K,)
-        Default is np.linspace(0,1,100).
-    - confidence_int: bool
-        Whether to show the confidence region (acceptance of the null hypothesis).
-        Default is True.
-    - conf_alpha: alpha level of the (1-conf-alpha)-confidence region.
-        Default is 0.05, for a confidence level of 0.95.
-    - title: sting
-        Title of the plot.
-    """
-    lims = [np.min([0, 0]), np.max([1, 1])]
-    plt.plot(lims, lims, "--", color="black", alpha=0.75)
-
-    for i in range(len(sbc_ranks[0])):
-        sbc_cdf = np.histogram(sbc_ranks[:, i], bins=len(alphas))[0].cumsum()
-        plt.plot(alphas, sbc_cdf / sbc_cdf.max(), color=colors[i], label=labels[i])
-
-    if confidence_int:
-        # Construct uniform histogram.
-        N = len(sbc_ranks)
-        confidence_region_null(alphas=alphas, N=N, conf_alpha=conf_alpha)
-
-    plt.ylabel("empirical CDF", fontsize=15)
-    plt.xlabel("ranks", fontsize=15)
-    plt.title(title, fontsize=18)
-    plt.legend()
-
-
-# ==== 2. (Local) Classifier Two Sample Test (C2ST) ====
-
-# PP-plot of clasifier predicted class probabilities
-
-
-def pp_plot_c2st(
+def pp_plot_lc2st(
     probas, probas_null, labels, colors, pp_vals_null=None, ax=None, **kwargs
 ):
+    """Probability - Probability (P-P) plot for the classifier predicted
+    class probabilities in (L)C2ST to assess the validity of a (or several)
+    density estimator(s).
+
+    Args:
+        probas (list of np.arrays): list of predicted class probabilities for each case
+            (i.e. associated to each density estimator).
+        probas_null (list of ): list of predicted class probabilities in each trial
+            under the null hypothesis.
+        labels (list): list of labels for every density estimator.
+        colors (list): list of colors for every density estimator.
+        pp_vals_null (dict): dictionary of PP-values for each trial under the null
+            hypothesis.
+        ax (matplotlib.axes.Axes): axes to plot on.
+        **kwargs: keyword arguments for matplotlib.pyplot.plot.
+
+    Returns:
+        ax (matplotlib.axes.Axes): axes with the P-P plot.
+    """
     if ax == None:
         ax = plt.gca()
     alphas = np.linspace(0, 1, 100)
@@ -222,16 +101,27 @@ def pp_plot_c2st(
     return ax
 
 
-# Interpretability plots for C2ST: regions of high/low predicted class probabilities
-
-
 def compute_dfs_with_probas_marginals(probas, P_eval):
+    """Compute dataframes with predicted class probabilities for each
+    (1d and 2d) marginal sample of the density estimator.
+    Used in `eval_space_with_proba_intensity`.
+
+    Args:
+        probas (np.array): predicted class probabilities on test data.
+        P_eval (torch.Tensor): corresponding sample from the density estimator
+            (test data directly or transformed test data in the case of a
+            normalizing flow density estimator).
+
+    Returns:
+        dfs (dict of pd.DataFrames): dict of dataframes if predicted probabilities
+        for each marginal dimension (keys).
+    """
     dim = P_eval.shape[-1]
     dfs = {}
     for i in range(dim):
         P_i = P_eval[:, i].numpy().reshape(-1, 1)
         df = pd.DataFrame({"probas": probas})
-        df["z"] = P_i[:,0]
+        df["z"] = P_i[:, 0]
         dfs[f"{i}"] = df
 
         for j in range(i + 1, dim):
@@ -254,6 +144,26 @@ def eval_space_with_proba_intensity(
     show_colorbar=True,
     ax=None,
 ):
+    """Plot 1d or 2d marginal histogram of samples of the density estimator
+    with probabilities as color intensity.
+
+    Args:
+        df_probas (pd.DataFrame): dataframe with predicted class probabilities
+            as obtained from `compute_dfs_with_probas_marginals`.
+        dim (int): dimension of the marginal histogram to plot.
+        z_space (bool): whether to plot the histogram in latent space
+            of the base distribution of a normalizing flow. If False, plot
+            in the original space of the estimated density.
+        n_bins (int): number of bins for the histogram.
+        vmin (float): minimum value for the color intensity.
+        vmax (float): maximum value for the color intensity.
+        cmap (matplotlib.colors.Colormap): colormap for the color intensity.
+        show_colorbar (bool): whether to show the colorbar.
+        ax (matplotlib.axes.Axes): axes to plot on.
+
+    Returns:
+        ax (matplotlib.axes.Axes): axes with the plot.
+    """
     if ax is None:
         ax = plt.gca()
 
@@ -325,3 +235,87 @@ def eval_space_with_proba_intensity(
 
     return ax
 
+
+# ================= Plots p.d.f.s ======================
+
+
+def multi_corner_plots(samples_list, legends, colors, title, **kwargs):
+    fig = None
+    for s, l, c in zip(samples_list, legends, colors):
+        fig = corner(s, legend=l, color=c, figure=fig, smooth=2, **kwargs)
+        plt.suptitle(title)
+
+
+def plot_distributions(dist_list, colors, labels, dim=1, hist=False):
+    if dim == 1:
+        for d, c, l in zip(dist_list, colors, labels):
+            plt.hist(
+                d,
+                bins=100,
+                color=c,
+                alpha=0.3,
+                density=True,
+                label=l,
+            )
+
+    elif dim == 2:
+        for d, c, l in zip(dist_list, colors, labels):
+            if not hist:
+                plt.scatter(
+                    d[:, 0],
+                    d[:, 1],
+                    color=c,
+                    alpha=0.3,
+                    label=l,
+                )
+            else:
+                plt.hist2d(
+                    d[:, 0].numpy(),
+                    d[:, 1].numpy(),
+                    bins=100,
+                    cmap=c,
+                    alpha=0.7,
+                    density=True,
+                    label=l,
+                )
+    else:
+        print("Not implemented.")
+
+
+# plots for normalizing flows
+def flow_vs_reference_distribution(
+    samples_ref, samples_flow, z_space=True, dim=1, hist=False
+):
+    if z_space:
+        title = (
+            r"Base-Distribution vs. Inverse Flow-Transformation (of $\Theta \mid x_0$)"
+        )
+        labels = [
+            r"Ref: $\mathcal{N}(0,1)$",
+            r"NPE: $T_{\phi}^{-1}(\Theta;x_0) \mid x_0$",
+        ]
+    else:
+        title = r"True vs. Estimated distributions at $x_0$"
+        labels = [r"Ref: $p(\Theta \mid x_0)$", r"NPE: $p(T_{\phi}(Z;x_0))$"]
+
+    if hist:
+        colors = ["Blues", "Oranges"]
+    else:
+        colors = ["blue", "orange"]
+    plot_distributions(
+        [samples_ref, samples_flow],
+        colors=colors,
+        labels=labels,
+        dim=dim,
+        hist=hist,
+    )
+    plt.title(title)
+
+    if dim == 1:
+        plt.xlabel("z")
+        plt.xlim(-5, 5)
+
+    elif dim == 2:
+        plt.xlabel(r"$z_1$")
+        plt.ylabel(r"$z_2$")
+    plt.legend()
