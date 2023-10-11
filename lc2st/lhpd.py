@@ -1,3 +1,6 @@
+# L-HPD: local Highest Predictive Density regions
+# - [Zhao et al. (2021)](https://arxiv.org/abs/2102.10473)
+
 import numpy as np
 import torch
 

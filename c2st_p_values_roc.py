@@ -201,7 +201,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     from lc2st.test_utils import eval_htest
-    from lc2st.vanillaC2ST import t_stats_c2st
+    from lc2st.c2st import t_stats_c2st
 
     from scipy.stats import multivariate_normal as mvn
     from scipy.stats import t

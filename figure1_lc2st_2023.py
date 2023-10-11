@@ -34,7 +34,7 @@ from sklearn.discriminant_analysis import (
     QuadraticDiscriminantAnalysis,
 )
 from sklearn.neural_network import MLPClassifier
-from lc2st.vanillaC2ST import c2st_scores, t_stats_c2st
+from lc2st.c2st import c2st_scores, t_stats_c2st
 
 from classifiers.optimal_bayes import (
     opt_bayes_scores,

@@ -36,7 +36,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
-from lc2st.localC2ST import sbibm_clf_kwargs, lc2st_scores
+from lc2st.lc2st import sbibm_clf_kwargs, lc2st_scores
 
 from tasks.jrnmm.prior import prior_JRNMM
 

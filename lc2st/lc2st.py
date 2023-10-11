@@ -1,5 +1,5 @@
-# L-C2ST: local version
-# Implementation based on the vanilla C2ST method.
+# L-C2ST: Local C2ST
+# Implementation based on the vanilla C2ST method implemented in `c2st.py`.
 
 from tqdm import tqdm
 
@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import KFold
 
-from .vanillaC2ST import (
+from .c2st import (
     train_c2st,
     eval_c2st,
     compute_metric,

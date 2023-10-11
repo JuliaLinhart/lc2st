@@ -11,9 +11,9 @@ from tqdm import tqdm
 import time
 
 from lc2st.test_utils import eval_htest, permute_data
-from lc2st.vanillaC2ST import t_stats_c2st
-from lc2st.localC2ST import t_stats_lc2st, lc2st_scores
-from lc2st.localHPD import t_stats_lhpd, lhpd_scores
+from lc2st.c2st import t_stats_c2st
+from lc2st.lc2st import t_stats_lc2st, lc2st_scores
+from lc2st.lhpd import t_stats_lhpd, lhpd_scores
 
 from tasks.sbibm.data_generators import (
     generate_task_data,
@@ -1663,9 +1663,9 @@ def compute_average_rejection_rates(
 if __name__ == "__main__":
     import torch
     import sbibm
-    from lc2st.localHPD import hpd_values, t_stats_lhpd
+    from lc2st.lhpd import hpd_values, t_stats_lhpd
     from tasks.sbibm.npe_utils import sample_from_npe_obs
-    from lc2st.localC2ST import sbibm_clf_kwargs
+    from lc2st.lc2st import sbibm_clf_kwargs
 
     import matplotlib.pyplot as plt
 

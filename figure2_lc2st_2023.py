@@ -39,7 +39,7 @@ import numpy as np
 import torch
 import sbibm
 
-from lc2st.vanillaC2ST import sbibm_clf_kwargs
+from lc2st.c2st import sbibm_clf_kwargs
 
 from experiment_utils_sbibm import (
     l_c2st_results_n_train,

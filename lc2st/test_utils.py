@@ -10,9 +10,9 @@ import numpy as np
 import torch
 import os
 
-from lc2st.vanillaC2ST import t_stats_c2st
-from lc2st.localC2ST import t_stats_lc2st
-from lc2st.localHPD import t_stats_lhpd
+from lc2st.c2st import t_stats_c2st
+from lc2st.lc2st import t_stats_lc2st
+from lc2st.lhpd import t_stats_lhpd
 
 
 def compute_pvalue(t_stat_est, t_stats_null):

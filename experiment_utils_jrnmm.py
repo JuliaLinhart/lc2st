@@ -22,8 +22,8 @@ from hnpe.posterior import build_flow, IdentityJRNMM, get_posterior
 from tasks.jrnmm.summary import summary_JRNMM
 
 from sbi.analysis.sbc import run_sbc
-from lc2st.localHPD import hpd_values, lhpd_scores, t_stats_lhpd
-from lc2st.localC2ST import lc2st_scores, t_stats_lc2st
+from lc2st.lhpd import hpd_values, lhpd_scores, t_stats_lhpd
+from lc2st.lc2st import lc2st_scores, t_stats_lc2st
 from lc2st.test_utils import eval_htest
 
 # GLOBAL VARIABLES
