@@ -11,7 +11,7 @@ import torch
 
 from scipy.stats import binom, uniform
 
-from lc2st.graphical_valdiags import (
+from lc2st.graphical_diagnostics import (
     PP_vals,
     compute_dfs_with_probas_marginals,
     eval_space_with_proba_intensity,

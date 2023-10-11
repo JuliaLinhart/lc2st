@@ -11,7 +11,7 @@ from sklearn.model_selection import KFold
 import sklearn
 
 from scipy.stats import wasserstein_distance
-from .graphical_valdiags import PP_vals
+from .graphical_diagnostics import PP_vals
 
 from tqdm import tqdm
 

@@ -271,7 +271,7 @@ if args.local_ct_gain:
             kwargs_c2st=None,
         )
         # Compute pp_vals for local pp-plots for lc2st_nf
-        from lc2st.graphical_valdiags import PP_vals
+        from lc2st.graphical_diagnostics import PP_vals
         import pandas as pd
 
         alphas = np.linspace(0, 1, 100)
