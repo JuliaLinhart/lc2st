@@ -16,7 +16,7 @@
 #   - empirical: 100 randomly generated using prior and simulator
 
 # USAGE:
-# >> python lc2st_stats_scatter_plots_sbibm.py --task <> --observations <task/empirical> --method <lc2st/lc2st_nf>
+# >> python figure6_lc2st_2023.py --task <> --observations <task/empirical> --method <lc2st/lc2st_nf>
 
 
 import argparse

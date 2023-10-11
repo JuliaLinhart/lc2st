@@ -80,7 +80,7 @@ python figure3_lc2st_2023.py --local_ct_gain
 ### Appendix F.2: Accuracy of L-C2ST w.r.t. the true C2ST
 To generate Figure 6 (correlation scatter plots) and results for Table 3 (corresponding p-values), run:
 ```
-python lc2st_stats_scatter_plots_sbibm.py --observations <task/empirical> --method <lc2st/lc2st_nf> --task <task_name>
+python figure6_lc2st_2023.py --observations <task/empirical> --method <lc2st/lc2st_nf> --task <task_name>
 ```
 For `task_name = two_moons`, `slcp`, `gaussian_mixture`, `gaussian_linear_uniform`, `bernoulli_glm`, `bernoulli_glm_raw`.
 
