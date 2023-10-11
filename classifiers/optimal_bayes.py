@@ -7,7 +7,7 @@ import numpy as np
 from scipy.stats import multivariate_normal as mvn, norm
 from scipy.stats import t
 
-from valdiags.vanillaC2ST import eval_c2st, compute_metric
+from lc2st.vanillaC2ST import eval_c2st, compute_metric
 
 
 class OptimalBayesClassifier:
