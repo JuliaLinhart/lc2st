@@ -45,7 +45,7 @@ from classifiers.optimal_bayes import (
 from c2st_p_values_roc import c2st_p_values_tfpr
 from lc2st.test_utils import eval_htest
 
-from plots_lc2st2023 import plot_plot_c2st_single_eval_shift
+from plots_lc2st2023 import plot_c2st_single_eval_shift
 
 # ====== GLOBAL PARAMETERS ======
 
@@ -487,7 +487,7 @@ if args.plot:
     )
 
     # Plot the results of both experiments
-    plot_plot_c2st_single_eval_shift(
+    plot_c2st_single_eval_shift(
         shift_list=shifts,
         t_stats_dict=t_stats_dict,
         TPR_dict=TPR_dict,

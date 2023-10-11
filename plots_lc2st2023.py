@@ -66,7 +66,7 @@ METRICS_DICT = {
 }
 
 
-def plot_plot_c2st_single_eval_shift(
+def plot_c2st_single_eval_shift(
     shift_list,
     t_stats_dict,
     TPR_dict,
