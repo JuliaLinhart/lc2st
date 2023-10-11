@@ -3,14 +3,14 @@
 # - L-C2ST diagnostics
 # - plot estimated (vs. true) p.d.f.s
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+
 from lampe.plots import corner
 from matplotlib.colors import Normalize
 from matplotlib.patches import Rectangle
 from matplotlib import cm
-
 from scipy.stats import uniform
 
 
@@ -73,10 +73,7 @@ def pp_plot_lc2st(
     alphas = np.linspace(0, 1, 100)
     pp_vals_dirac = PP_vals([0.5] * len(probas), alphas)
     ax.plot(
-        alphas,
-        pp_vals_dirac,
-        "--",
-        color="black",
+        alphas, pp_vals_dirac, "--", color="black",
     )
 
     if pp_vals_null is None:
@@ -250,23 +247,14 @@ def plot_distributions(dist_list, colors, labels, dim=1, hist=False):
     if dim == 1:
         for d, c, l in zip(dist_list, colors, labels):
             plt.hist(
-                d,
-                bins=100,
-                color=c,
-                alpha=0.3,
-                density=True,
-                label=l,
+                d, bins=100, color=c, alpha=0.3, density=True, label=l,
             )
 
     elif dim == 2:
         for d, c, l in zip(dist_list, colors, labels):
             if not hist:
                 plt.scatter(
-                    d[:, 0],
-                    d[:, 1],
-                    color=c,
-                    alpha=0.3,
-                    label=l,
+                    d[:, 0], d[:, 1], color=c, alpha=0.3, label=l,
                 )
             else:
                 plt.hist2d(
@@ -303,11 +291,7 @@ def flow_vs_reference_distribution(
     else:
         colors = ["blue", "orange"]
     plot_distributions(
-        [samples_ref, samples_flow],
-        colors=colors,
-        labels=labels,
-        dim=dim,
-        hist=hist,
+        [samples_ref, samples_flow], colors=colors, labels=labels, dim=dim, hist=hist,
     )
     plt.title(title)
 

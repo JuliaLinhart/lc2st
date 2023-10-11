@@ -1,5 +1,8 @@
+# Code from https://github.com/plcrodrigues/HNPE
+
 import torch
 import torch.fft
+
 from torch import nn
 
 
@@ -44,9 +47,7 @@ class AutocorrSeq(nn.Module):
             Xaveraged = Xcross.sum(dim=2) / denominator
             Xautocorr[:, k] = Xaveraged[:, 0]
 
-        Xautocorr = Xautocorr[:, 1:].div(
-            Xautocorr[:, 0].view(len(Xautocorr), -1)
-        )
+        Xautocorr = Xautocorr[:, 1:].div(Xautocorr[:, 0].view(len(Xautocorr), -1))
 
         return Xautocorr
 
@@ -57,8 +58,12 @@ class YuleNet(nn.Module):
 
         # first layer
         self.conv1 = nn.Conv1d(
-            in_channels=1, out_channels=8, kernel_size=64,
-            stride=1, padding=32, bias=True
+            in_channels=1,
+            out_channels=8,
+            kernel_size=64,
+            stride=1,
+            padding=32,
+            bias=True,
         )
         self.relu1 = nn.ReLU()
 
@@ -67,8 +72,12 @@ class YuleNet(nn.Module):
 
         # second layer
         self.conv2 = nn.Conv1d(
-            in_channels=8, out_channels=8, kernel_size=64,
-            stride=1, padding=32, bias=True
+            in_channels=8,
+            out_channels=8,
+            kernel_size=64,
+            stride=1,
+            padding=32,
+            bias=True,
         )
         self.relu2 = nn.ReLU()
 
@@ -81,7 +90,7 @@ class YuleNet(nn.Module):
         # fully connected layer
         self.linear = nn.Linear(
             in_features=8 * n_time_samples // (pooling1 * pooling2),
-            out_features=n_features
+            out_features=n_features,
         )
         self.relu3 = nn.ReLU()
 
@@ -143,10 +152,12 @@ class PEN(nn.Module):
     def forward(self, X):
 
         M = X.shape[1]
-        mask = torch.stack([
-            torch.roll(torch.eye(M, self._d + 1), shifts=i, dims=0)
-            for i in range(M - self._d)
-        ])
+        mask = torch.stack(
+            [
+                torch.roll(torch.eye(M, self._d + 1), shifts=i, dims=0)
+                for i in range(M - self._d)
+            ]
+        )
         Xshift = torch.matmul(X, mask).permute(1, 0, 2)
         Yphi = torch.sum(self.phi(Xshift), axis=1)
         Y = self.rho(torch.cat([X[:, : self._d], Yphi], dim=1))
@@ -172,16 +183,17 @@ class PowerSpecDens(nn.Module):
 
         ntrials = X.shape[0]
         ns = X.shape[1]
-        nfreqs = 2*(self.nbins-1) + 1
-        windows = [wi + torch.arange(nfreqs) for wi in range(0,
-                                                             ns-nfreqs+1,
-                                                             int(nfreqs/2))]
+        nfreqs = 2 * (self.nbins - 1) + 1
+        windows = [
+            wi + torch.arange(nfreqs)
+            for wi in range(0, ns - nfreqs + 1, int(nfreqs / 2))
+        ]
         S = []
         for i in range(ntrials):
             Xi = X[i, :].view(-1)
             Si = []
             for w in windows:
-                Si.append(torch.abs(torch.fft.rfft(Xi[w]))**2)
+                Si.append(torch.abs(torch.fft.rfft(Xi[w])) ** 2)
             Si = torch.mean(torch.stack(Si), axis=0)
             if self.logscale:
                 Si = torch.log10(Si)

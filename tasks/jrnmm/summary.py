@@ -1,11 +1,12 @@
-from functools import partial
-
-from scipy.signal import welch
+# Code adapted from https://github.com/plcrodrigues/HNPE
 
 import torch
+
+from functools import partial
+from hnpe.summary import YuleNet, AutocorrSeq, PowerSpecDens
+from scipy.signal import welch
 from torch import nn
 
-from hnpe.summary import YuleNet, AutocorrSeq, PowerSpecDens
 
 torch.autograd.set_detect_anomaly(True)
 
@@ -21,14 +22,13 @@ class FourierLayer(nn.Module):
         else:
             X = X.view(len(X), -1)
         Xfourier = []
-        Xnumpy = X.clone().detach().to('cpu').numpy()
-        _, Xfourier = welch(Xnumpy, nperseg=2*(self.nfreqs-1))
+        Xnumpy = X.clone().detach().to("cpu").numpy()
+        _, Xfourier = welch(Xnumpy, nperseg=2 * (self.nfreqs - 1))
         return X.new_tensor(Xfourier)
 
 
 class fourier_embedding(nn.Module):
-    def __init__(self, d_out=1, n_time_samples=1024, plcr=True,
-                 logscale=False):
+    def __init__(self, d_out=1, n_time_samples=1024, plcr=True, logscale=False):
         super().__init__()
         self.d_out = d_out
         if plcr:  # use my implementation for power spectral density
@@ -85,18 +85,16 @@ class debug_embedding(nn.Module):
 
 
 emb_dict = {}
-emb_dict['Fourier'] = partial(fourier_embedding, plcr=True)
-emb_dict['Autocorr'] = autocorr_embedding
-emb_dict['YuleNet'] = yulenet_embedding
-emb_dict['Debug'] = debug_embedding
+emb_dict["Fourier"] = partial(fourier_embedding, plcr=True)
+emb_dict["Autocorr"] = autocorr_embedding
+emb_dict["YuleNet"] = yulenet_embedding
+emb_dict["Debug"] = debug_embedding
 
 
 class summary_JRNMM(nn.Module):
-
-    def __init__(self, n_extra=0,
-                 d_embedding=33,
-                 n_time_samples=1024,
-                 type_embedding='Fourier'):
+    def __init__(
+        self, n_extra=0, d_embedding=33, n_time_samples=1024, type_embedding="Fourier"
+    ):
 
         super().__init__()
         self.n_extra = n_extra
@@ -116,7 +114,7 @@ class summary_JRNMM(nn.Module):
         for xi in x:
             yi = [self.embedding(xi[:, 0])]
             for j in range(n_extra):
-                yi.append(self.embedding(xi[:, j+1]))
+                yi.append(self.embedding(xi[:, j + 1]))
             yi = torch.cat(yi).T
             y.append(yi)
         y = torch.stack(y)
@@ -133,12 +131,12 @@ class summary_JRNMM(nn.Module):
         # return y_
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     n_extra = 0
     d_embedding = 33
     x = torch.randn(3, 1024, 1)
-    net = summary_JRNMM(n_extra=n_extra,
-                        d_embedding=d_embedding,
-                        type_embedding='Fourier')
+    net = summary_JRNMM(
+        n_extra=n_extra, d_embedding=d_embedding, type_embedding="Fourier"
+    )
     y = net(x)
     print(y.shape)

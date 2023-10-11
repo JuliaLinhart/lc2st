@@ -3,18 +3,15 @@
 # - [Lee et al. (2018)](https://arxiv.org/abs/1812.08927)
 
 import numpy as np
-
-from sklearn.neural_network import MLPClassifier
-
-from sklearn.utils import shuffle
-from sklearn.model_selection import KFold
 import sklearn
 
+from sklearn.model_selection import KFold
+from sklearn.neural_network import MLPClassifier
+from sklearn.utils import shuffle
 from scipy.stats import wasserstein_distance
-from .graphical_diagnostics import PP_vals
-
 from tqdm import tqdm
 
+from .graphical_diagnostics import PP_vals
 from .test_utils import permute_data
 
 # define default classifier
@@ -103,6 +100,7 @@ def compute_metric(proba, metrics, single_class_eval=False):
     Args:
         proba (numpy.array): predicted probability for class 0.
         metrics (list of str): list of names of metrics to compute.
+        single_class_eval (bool, optional): if True, probas were only evaluated on class 0.
 
     Returns:
         (dict): dictionary of computed metrics.
@@ -204,7 +202,9 @@ def c2st_scores(
             Defaults to None.
 
     Returns:
-        (dict): dictionary of computed scores, i.e. estimated test statistics on P and Q.
+        (tuple): tuple containing
+            - scores (dict): dictionary of computed scores, i.e. estimated test statistics on P and Q.
+            - probas (numpy.array): predicted probabilities.
     """
 
     if not cross_val:
@@ -233,10 +233,7 @@ def c2st_scores(
                 )
 
             accuracy, proba = eval_c2st(
-                P=P_eval,
-                Q=Q_eval,
-                clf=clf,
-                single_class_eval=single_class_eval,
+                P=P_eval, Q=Q_eval, clf=clf, single_class_eval=single_class_eval,
             )
 
             ens_accuracies.append(accuracy)
@@ -339,11 +336,9 @@ def t_stats_c2st(
         n_trials_null (int, optional): number of trials to simulate the null hypothesis,
             i.e. number of times to compute the test statistics under the null hypothesis.
             Defaults to 100.
-        t_stats_null (dict, optional): dictionary of precomputed scores under the null hypothesis.
-            If None, they are computed via permutations. Defaults to None.
         use_permutation (bool, optional): if True, use permutation to simulate the null hypothesis.
             Defaults to True.
-        list_null_samples_P (list of numpy.array, optional): list of samples from P to
+        list_P_null (list of numpy.array, optional): list of samples from P to
             train the clasifier under the null hypothesis.
             Of size (2*n_trials_null, n_samples, dim).
             Defaults to None.
@@ -353,6 +348,8 @@ def t_stats_c2st(
             Defaults to None.
         verbose (bool, optional): if True, display progress bar.
             Defaults to True.
+        return_probas (bool, optional): if True, return the predicted class probabilities.
+            Defaults to False.
         **kwargs: keyword arguments for scores_fn.
 
     Returns: one of the following (depending on null_hypothesis)
@@ -458,22 +455,13 @@ def sbibm_clf_kwargs(ndim):
 
 
 def c2st_sbibm(
-    P,
-    Q,
-    metric="accuracy",
-    classifier=None,
-    **kwargs,  # kwargs for c2st_scores
+    P, Q, metric="accuracy", classifier=None, **kwargs,  # kwargs for c2st_scores
 ):
     ndim = P.shape[-1]
     if classifier is None:
         clf_class = MLPClassifier
         clf_kwargs = sbibm_clf_kwargs(ndim)
     scores, _ = c2st_scores(
-        P,
-        Q,
-        metrics=[metric],
-        clf_class=clf_class,
-        clf_kwargs=clf_kwargs,
-        **kwargs,
+        P, Q, metrics=[metric], clf_class=clf_class, clf_kwargs=clf_kwargs, **kwargs,
     )
     return torch.tensor([np.mean(scores[metric])])

@@ -1,11 +1,12 @@
-import torch
 import numpy as np
+import torch
 
 from copy import deepcopy
+
+# from joblib import Parallel, delayed
 from tqdm import tqdm
 
 from .npe_utils import inv_flow_transform_obs, sample_from_npe_obs
-from joblib import Parallel, delayed
 
 
 def generate_task_data(
@@ -64,15 +65,12 @@ def generate_task_data(
             try:
                 print(f"Sampling observation {num_obs}...")
                 ref_samples = task._sample_reference_posterior(
-                    num_samples=n_samples,
-                    num_observation=num_obs,
-                    observation=None,
+                    num_samples=n_samples, num_observation=num_obs, observation=None,
                 )
             except TypeError:
                 print(f"Sampling observation {num_obs}...")
                 ref_samples = task._sample_reference_posterior(
-                    num_samples=n_samples,
-                    num_observation=num_obs,
+                    num_samples=n_samples, num_observation=num_obs,
                 )
             except (ValueError, AssertionError) as e:
                 print()
@@ -195,9 +193,7 @@ def generate_npe_data_for_c2st(
         # Compute inverse flow transformation of npe on reference posterior samples at x_0
         if nf_case and reference_posterior_samples is not None:
             reference_inv_transform_samples[i] = inv_flow_transform_obs(
-                reference_posterior_samples[i],
-                observation,
-                npe.posterior_estimator,
+                reference_posterior_samples[i], observation, npe.posterior_estimator,
             )
         else:
             reference_inv_transform_samples[i] = None
@@ -205,10 +201,7 @@ def generate_npe_data_for_c2st(
 
 
 def generate_npe_data_for_lc2st(
-    npe,
-    base_dist_samples,
-    joint_samples,
-    nf_case=True,
+    npe, base_dist_samples, joint_samples, nf_case=True,
 ):
     """Generate data for a given task and npe that is used in the LC2ST(-NF) methods.
         - sample from the npe for every observation x in `joint_samples` (using the forward-flow transformation).
@@ -246,11 +239,7 @@ def generate_npe_data_for_lc2st(
             npe.set_default_x(x)
             # compute inverse flow transformation of flowon (theta, x)
             inv_transform_samples_joint.append(
-                inv_flow_transform_obs(
-                    theta,
-                    x,
-                    npe.posterior_estimator,
-                )
+                inv_flow_transform_obs(theta, x, npe.posterior_estimator,)
             )
     npe_samples_joint = torch.stack(npe_samples_joint)[:, 0, :]
     if nf_case:

@@ -1,19 +1,17 @@
 # L-C2ST: Local C2ST
 # Implementation based on the vanilla C2ST method implemented in `c2st.py`.
 
-from tqdm import tqdm
-
 import numpy as np
 
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import KFold
+from tqdm import tqdm
 
 from .c2st import (
     train_c2st,
     eval_c2st,
     compute_metric,
 )
-
 from .test_utils import permute_data
 
 # define default classifier
@@ -457,9 +455,7 @@ def t_stats_lc2st(
                 joint_P_x = torch.cat([P, x_P], dim=1)
                 joint_Q_x = torch.cat([Q, x_Q], dim=1)
                 joint_P_x_perm, joint_Q_x_perm = permute_data(
-                    joint_P_x,
-                    joint_Q_x,
-                    seed=t,
+                    joint_P_x, joint_Q_x, seed=t,
                 )
                 P_t = joint_P_x_perm[:, : P.shape[-1]]
                 x_P_t = joint_P_x_perm[:, P.shape[-1] :]

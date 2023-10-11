@@ -1,27 +1,26 @@
-
-import torch
-import torch.nn as nn
-from torch.nn import functional as F
-import torch.distributions as D
-
-from nflows.flows import Flow
 import nflows.distributions as distributions
 import nflows.transforms as transforms
+import torch
+import torch.distributions as D
+import torch.nn as nn
 
+from nflows.flows import Flow
 from nflows.nn import nets
 from sbi.utils.torchutils import create_alternating_binary_mask
 from sbi.utils.sbiutils import standardizing_transform
+from torch.nn import functional as F
+
 
 def construct_maf(
-    features, 
-    hidden_features, 
+    features,
+    hidden_features,
     context_features=None,
-    num_layers=5, 
+    num_layers=5,
     random_permutation=False,
-    standardize_transform = True,
-    ):
-    """ MAF as in nflows but with standardizing_transform from sbi 
-    
+    standardize_transform=True,
+):
+    """ MAF as in nflows but with standardizing_transform from sbi
+
     Returns:
         Neural network (nflows.Flow).
     """
@@ -31,7 +30,7 @@ def construct_maf(
     # Base dist
     base_dist = distributions.StandardNormal(shape=torch.Size([d]))
 
-    # Transformations: MAF/MADE layers 
+    # Transformations: MAF/MADE layers
     trans_components = []
     num_layers = num_layers
     for _ in range(num_layers):
@@ -39,13 +38,20 @@ def construct_maf(
             trans_components.append(transforms.RandomPermutation(features=d))
         else:
             trans_components.append(transforms.ReversePermutation(features=d))
-        trans_components.append(transforms.MaskedAffineAutoregressiveTransform(features=d, 
-                                                            hidden_features=hidden_features, context_features=context_features))
+        trans_components.append(
+            transforms.MaskedAffineAutoregressiveTransform(
+                features=d,
+                hidden_features=hidden_features,
+                context_features=context_features,
+            )
+        )
     transform = transforms.CompositeTransform(trans_components)
-    
+
     if standardize_transform:
-        transform = transforms.CompositeTransform([standardizing_transform(features), transform])
-    
+        transform = transforms.CompositeTransform(
+            [standardizing_transform(features), transform]
+        )
+
     # Construct Flow
     flow = Flow(transform, base_dist)
 
@@ -110,9 +116,11 @@ def construct_nsf(
 
     return neural_net
 
-def count_parameters(model): 
+
+def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
+
 # CDF function of a (conditional) flow evaluated in x: F_{Q|context}(x)
-def cdf_flow(x, context, flow, base_dist = D.Normal(0,1)): 
+def cdf_flow(x, context, flow, base_dist=D.Normal(0, 1)):
     return base_dist.cdf(flow._transform(x, context=context)[0])

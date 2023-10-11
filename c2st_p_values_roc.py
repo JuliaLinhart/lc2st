@@ -11,6 +11,7 @@
 # Other experiments can be added.
 
 import numpy as np
+
 from tqdm import tqdm
 
 
@@ -264,11 +265,7 @@ if __name__ == "__main__":
 
     # test parameters
     parser.add_argument(
-        "--n_runs",
-        "-nr",
-        type=int,
-        default=300,
-        help="Number of test runs.",
+        "--n_runs", "-nr", type=int, default=300, help="Number of test runs.",
     )
     parser.add_argument(
         "-alphas",
@@ -429,8 +426,7 @@ if __name__ == "__main__":
                 if os.path.exists(PATH_EXPERIMENT + "t_stats_null/" + filename):
                     # load null scores if they exist
                     t_stats_null = np.load(
-                        PATH_EXPERIMENT + "t_stats_null/" + filename,
-                        allow_pickle=True,
+                        PATH_EXPERIMENT + "t_stats_null/" + filename, allow_pickle=True,
                     ).item()
                 else:
                     # otherwise, compute them
@@ -458,8 +454,7 @@ if __name__ == "__main__":
                         Q_eval=list_P_eval_null[1],
                     )
                     np.save(
-                        PATH_EXPERIMENT + "t_stats_null/" + filename,
-                        t_stats_null,
+                        PATH_EXPERIMENT + "t_stats_null/" + filename, t_stats_null,
                     )
                 scores_null[cross_val] = t_stats_null
         else:

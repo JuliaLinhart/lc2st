@@ -4,10 +4,9 @@
 
 import numpy as np
 
+from lc2st.c2st import eval_c2st, compute_metric
 from scipy.stats import multivariate_normal as mvn, norm
 from scipy.stats import t
-
-from lc2st.c2st import eval_c2st, compute_metric
 
 
 class OptimalBayesClassifier:
@@ -50,10 +49,7 @@ class OptimalBayesClassifier:
         d = (self.dist_c0.pdf(x) / (self.dist_c0.pdf(x) + self.dist_c1.pdf(x))).reshape(
             -1, 1
         )
-        return np.concatenate(
-            [d, 1 - d],
-            axis=1,
-        )
+        return np.concatenate([d, 1 - d], axis=1,)
 
     def score(self, x, y):
         return np.mean(self.predict(x) == y)
@@ -279,11 +275,7 @@ if __name__ == "__main__":
             linestyle = "--"
         # plt.errorbar(shifts, test_stats_mean, color=color, label=name, linestyle=linestyle)
         plt.plot(
-            shifts,
-            test_stats_mean[name],
-            color=color,
-            label=name,
-            linestyle=linestyle,
+            shifts, test_stats_mean[name], color=color, label=name, linestyle=linestyle,
         )
         plt.fill_between(
             x=shifts,

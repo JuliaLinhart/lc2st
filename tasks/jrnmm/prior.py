@@ -1,4 +1,7 @@
+# Code adapted from https://github.com/plcrodrigues/HNPE
+
 import torch
+
 from sbi.utils import BoxUniform
 
 

@@ -1,9 +1,8 @@
 import torch
-from torch.utils import data
 
 from lampe.inference import NPELoss
 from lampe.utils import GDStep
-
+from torch.utils import data
 from tqdm import tqdm
 
 

@@ -19,33 +19,29 @@
 # ====== IMPORTS ======
 
 import argparse
-import os
-from functools import partial
-
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import os
 import torch
-
-from scipy.stats import multivariate_normal as mvn
-from scipy.stats import t
-
-from sklearn.discriminant_analysis import (
-    LinearDiscriminantAnalysis,
-    QuadraticDiscriminantAnalysis,
-)
-from sklearn.neural_network import MLPClassifier
-from lc2st.c2st import c2st_scores, t_stats_c2st
 
 from classifiers.optimal_bayes import (
     opt_bayes_scores,
     AnalyticGaussianLQDA,
     AnalyticStudentClassifier,
 )
-
 from c2st_p_values_roc import c2st_p_values_tfpr
+from functools import partial
+from lc2st.c2st import c2st_scores, t_stats_c2st
 from lc2st.test_utils import eval_htest
-
 from plots_lc2st2023 import plot_c2st_single_eval_shift
+from scipy.stats import multivariate_normal as mvn
+from scipy.stats import t
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+from sklearn.neural_network import MLPClassifier
+
 
 # ====== GLOBAL PARAMETERS ======
 
@@ -65,18 +61,9 @@ USE_PERMUTATION = (
 
 # Test statistics
 METRICS = {
-    "accuracy": [
-        "acc_ref",
-        "acc_single_class",
-    ],
-    "mse": [
-        "mse_ref",
-        "mse_single_class",
-    ],
-    "div": [
-        "max_ref",
-        "max_single_class",
-    ],
+    "accuracy": ["acc_ref", "acc_single_class",],
+    "mse": ["mse_ref", "mse_single_class",],
+    "div": ["max_ref", "max_single_class",],
 }
 
 # ====== Parse arguments ======
@@ -85,10 +72,7 @@ parser = argparse.ArgumentParser()
 
 # Data parameters
 parser.add_argument(
-    "--dim",
-    type=int,
-    default=2,
-    help="Dimension of the data (number of features).",
+    "--dim", type=int, default=2, help="Dimension of the data (number of features).",
 )
 
 parser.add_argument(
@@ -333,8 +317,7 @@ if args.power_shift and not args.plot:
             if os.path.exists(PATH_EXPERIMENT + "t_stats_null/" + filename):
                 # Load null scores if they exist ...
                 scores_null = np.load(
-                    PATH_EXPERIMENT + "t_stats_null/" + filename,
-                    allow_pickle=True,
+                    PATH_EXPERIMENT + "t_stats_null/" + filename, allow_pickle=True,
                 ).item()
             else:
                 # ... otherwise, compute them
@@ -370,8 +353,7 @@ if args.power_shift and not args.plot:
                 if not os.path.exists(PATH_EXPERIMENT + "t_stats_null/"):
                     os.makedirs(PATH_EXPERIMENT + "t_stats_null/")
                 np.save(
-                    PATH_EXPERIMENT + "t_stats_null/" + filename,
-                    scores_null,
+                    PATH_EXPERIMENT + "t_stats_null/" + filename, scores_null,
                 )
 
         else:

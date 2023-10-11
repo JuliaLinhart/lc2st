@@ -7,12 +7,12 @@
 #  - precompute_test_statistics_null
 
 import numpy as np
-import torch
 import os
+import torch
 
-from lc2st.c2st import t_stats_c2st
-from lc2st.lc2st import t_stats_lc2st
-from lc2st.lhpd import t_stats_lhpd
+from .c2st import t_stats_c2st
+from .lc2st import t_stats_lc2st
+from .lhpd import t_stats_lhpd
 
 
 def compute_pvalue(t_stat_est, t_stats_null):
@@ -91,7 +91,6 @@ def permute_data(P, Q, seed=42):
     X = torch.cat([P, Q], dim=0)
     X_perm = X[torch.randperm(n_samples * 2)]
     return X_perm[:n_samples], X_perm[n_samples:]
-
 
 
 def precompute_t_stats_null(

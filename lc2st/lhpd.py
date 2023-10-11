@@ -2,34 +2,27 @@
 # - [Zhao et al. (2021)](https://arxiv.org/abs/2102.10473)
 
 import numpy as np
+import sklearn
 import torch
 
-from tqdm import tqdm
-
-import sklearn
-from sklearn.neural_network import MLPClassifier
-
 from scipy.stats import uniform
+from sklearn.neural_network import MLPClassifier
+from tqdm import tqdm
 
 # define default classifier
 DEFAULT_CLF = MLPClassifier(alpha=0, max_iter=25000)
 
 
 def hpd_values(
-    Y,
-    est_log_prob_fn,
-    est_sample_fn,
-    X=None,
-    n_samples=1000,
-    verbose=True,
+    Y, est_log_prob_fn, est_sample_fn, X=None, n_samples=1000, verbose=True,
 ):
     """Highest Predictive Density values for a (conditional) estimator q:
 
-    We check if a true sample x_0 is in the highest predictive density region of the est-estimator q
-    at level 1-alpha, which is equivalent to the proportion of samples x ~ q
-    having a higher estimated density than x_0: E_x[I_{q(x)>q(x_0)}].
+    We check if a true sample y_0 is in the highest predictive density region of the estimator q
+    at level 1-alpha, which is equivalent to the proportion of samples y ~ q having a higher
+    estimated density than y_0: E_x[I_{q(y)>q(y_0)}].
 
-    By computing this for a large number of x_0, covering the space of the true distribution p(x),
+    By computing this for a large number of y_0, covering the space of the true distribution p(y),
     we get the expected coverage (or levels) over all possible covergage levels in [0,1].
 
     If q = p, these should be uniformly distributed over [0,1].
@@ -37,6 +30,20 @@ def hpd_values(
     Following the implementation from
     https://github.com/francois-rozet/lampe/blob/master/lampe/diagnostics.py
     adapted to non-lampe distributions.
+
+    Args:
+        Y (tensor): samples from the true distribution p(y).
+        est_log_prob_fn (function): function that computes the log-probability of the estimator q.
+        est_sample_fn (function): function that samples from the estimator q.
+        X (tensor, optional): samples such that (y,x) ~ p(y,x) for conditional estimators q(y|x).
+            Defaults to None.
+        n_samples (int, optional): number of samples to use for the estimation.
+            Defaults to 1000.
+        verbose (bool, optional): whether to show progress bar.
+            Defaults to True.
+
+    Returns:
+        tensor: expected coverage (or levels) over all possible covergage levels in [0,1].
     """
     values = []
 
@@ -67,9 +74,22 @@ def hpd_values(
 
 
 def train_lhpd(X, joint_hpd_values, n_alphas, clf, verbose=True):
+    """Train classifiers to estimate the point-wise local HPD-distribution of
+    a conditional estimator q(y|x) of p(y|x).
+
+    Args:
+        X (np.array): conditioning data.
+        joint_hpd_values (np.array): hpd values computed on X.
+        n_alphas (int): number of alpha levels = number of classifiers (one for each point
+            where we want to estimate the local HPD-distribution).
+        clf (sklearn.base.BaseEstimator): classifier to train.
+        verbose (bool, optional): verbosity. Defaults to True.
+
+    Returns:
+        dict: trained classifiers for each alpha level.
+    """
     # define range of alpha levels such that the highest value will yield
     # data from both classes: hpd_values <= max(alpha) not always 1
-
     max_v = max(joint_hpd_values)
     alphas = np.linspace(0, max_v - 0.001, n_alphas)
 
@@ -200,6 +220,40 @@ def t_stats_lhpd(
     verbose=True,
     **kwargs,  # kwargs for scores_fn
 ):
+    """Compute the t-statistics of the local HPD-distribution of a conditional
+    estimator q(y|x) of p(y|x).
+
+    Args:
+        Y (np.array): data drawn from p(y)
+        X (np.array): data drawn from p(x|y) such that [Y,X]~p(y,x)
+        n_alphas (int): number of alpha values to evaluate the c.d.f.
+        x_eval (np.array): conditioning observation at which to evaluate the test.
+        scores_fn (function): function to compute the scores.
+            Default: lhpd_scores.
+        metrics (list): metrics to compute in scores_fn.
+            Default: ["mse"].
+        trained_clfs (dict): pre-trained classifiers.
+            Default: None.
+        null_hypothesis (bool): whether to compute the t-stat under the null hypothesis.
+            Default: False.
+        n_trials_null (int): number of trials under the null hypothesis.
+            Default: 100.
+        trained_clfs_null (list of dicts): pre-trained classifiers under the null hypothesis.
+            Default: None.
+        return_r_alphas (bool): whether to return the r_alphas.
+            Default: False.
+        return_clfs_null (bool): whether to return the classifiers under the null hypothesis.
+            Default: False.
+        verbose (bool): whether to display progress bars.
+            Default: True.
+        **kwargs: kwargs for scores_fn.
+
+    Returns:
+        (tuple): tuple containing
+            - t_stats (dict): t-statistics of the scores.
+            - r_alphas (dict): estimated c.d.f. values.
+            - clfs_null (list of dicts): classifiers trained under the null hypothesis.
+    """
     if not null_hypothesis:
         t_stat_data, r_alphas_data = scores_fn(
             Y, X, n_alphas, x_eval, trained_clfs=trained_clfs, verbose=True, **kwargs

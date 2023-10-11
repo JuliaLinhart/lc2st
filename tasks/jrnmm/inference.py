@@ -1,15 +1,15 @@
-from pathlib import Path
-from datetime import datetime
-from tensorboardX import SummaryWriter
+# Code adapted from https://github.com/plcrodrigues/HNPE
 
 import numpy as np
 import torch
 
+from datetime import datetime
 from nde.train import train_lampe_npe
-
+from pathlib import Path
 from sbi import inference as sbi_inference
 from sbi.utils import get_log_root
 from sbi.utils.sbiutils import standardizing_net
+from tensorboardX import SummaryWriter
 
 
 def run_inference_lampe(
@@ -98,11 +98,7 @@ def run_inference_lampe(
 
 
 def summary_plcr(prefix):
-    logdir = Path(
-        get_log_root(),
-        prefix,
-        datetime.now().isoformat().replace(":", "_"),
-    )
+    logdir = Path(get_log_root(), prefix, datetime.now().isoformat().replace(":", "_"),)
     return SummaryWriter(logdir)
 
 

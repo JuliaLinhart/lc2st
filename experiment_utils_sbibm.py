@@ -1,28 +1,23 @@
 # Functions to run experiments on sbibm tasks with npe-flows
 
 # IMPORTS
-import os
 import copy
-
-import torch
 import numpy as np
-
-from tqdm import tqdm
+import os
 import time
+import torch
 
-from lc2st.test_utils import eval_htest, permute_data
+from lc2st.test_utils import eval_htest, permute_data, precompute_t_stats_null
 from lc2st.c2st import t_stats_c2st
 from lc2st.lc2st import t_stats_lc2st, lc2st_scores
 from lc2st.lhpd import t_stats_lhpd, lhpd_scores
-
 from tasks.sbibm.data_generators import (
     generate_task_data,
     generate_npe_data_for_c2st,
     generate_npe_data_for_lc2st,
 )
 from tasks.sbibm.npe_utils import sample_from_npe_obs
-
-from lc2st.test_utils import precompute_t_stats_null
+from tqdm import tqdm
 
 
 def l_c2st_results_n_train(
@@ -877,8 +872,7 @@ def generate_data_one_run(
                     task_path / f"reference_posterior_samples_n_cal_{n_cal}.pkl",
                 )
             torch.save(
-                joint_samples_cal,
-                task_path / f"joint_samples_n_cal_{n_cal}.pkl",
+                joint_samples_cal, task_path / f"joint_samples_n_cal_{n_cal}.pkl",
             )
 
     # Eval set for fixed task data (no joint samples)

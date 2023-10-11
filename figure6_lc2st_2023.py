@@ -23,16 +23,16 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import torch
 import sbibm
+import torch
 
-from pathlib import Path
-from scipy import stats
-from lc2st.c2st import sbibm_clf_kwargs
 from experiment_utils_sbibm import (
     generate_data_one_run,
     compute_test_results_npe_one_run,
 )
+from lc2st.c2st import sbibm_clf_kwargs
+from pathlib import Path
+from scipy import stats
 from tueplots import fonts, axes
 
 # Plotting parameters
@@ -93,11 +93,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--observations",
-    "-o",
-    type=str,
-    default="task",
-    choices=["task", "empirical"],
+    "--observations", "-o", type=str, default="task", choices=["task", "empirical"],
 )
 parser.add_argument(
     "--sbibm_obs",
@@ -198,7 +194,9 @@ if not os.path.exists(result_path):
     os.makedirs(result_path)
 
 if os.path.exists(result_path / f"results_{args.method}_dict_{args.observations}.pkl"):
-    results_dict = torch.load(result_path / f"results_{args.method}_dict_{args.observations}.pkl")
+    results_dict = torch.load(
+        result_path / f"results_{args.method}_dict_{args.observations}.pkl"
+    )
 else:
     results_n_train_path = Path(f"results") / test_params / eval_params
     if args.observations == "empirical":
@@ -224,7 +222,6 @@ else:
             task_observations=task_observations,
         )
         torch.save(data_samples, data_path)
-
 
     # Compute/ load and plot results
 
@@ -258,7 +255,10 @@ else:
             save_results=True,  # save results to disk
             seed=RANDOM_SEED,
         )
-    torch.save(results_dict, result_path / f"results_{args.method}_dict_{args.observations}.pkl")
+    torch.save(
+        results_dict,
+        result_path / f"results_{args.method}_dict_{args.observations}.pkl",
+    )
 
 # plot identity line
 plt.plot([0, 1], [0, 1], "k--")

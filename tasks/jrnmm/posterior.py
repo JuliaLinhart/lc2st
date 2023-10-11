@@ -1,12 +1,13 @@
-import torch
-from pathlib import Path
+# Code adapted from https://github.com/plcrodrigues/HNPE
 
-# Imports for the SBI package
-from sbi.utils.get_nn_models import build_maf
-from pyknos.nflows.distributions import base
-from zuko.flows import MAF
-from lampe.inference import NPE
+import torch
 import torch.nn as nn
+
+from lampe.inference import NPE
+from pathlib import Path
+from pyknos.nflows.distributions import base
+from sbi.utils.get_nn_models import build_maf
+from zuko.flows import MAF
 
 
 class AggregateInstances(torch.nn.Module):

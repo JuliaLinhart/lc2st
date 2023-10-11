@@ -28,30 +28,27 @@
 # ====== Imports ======
 
 import argparse
-from pathlib import Path
-import os
-from functools import partial
-
-import numpy as np
-import torch
 import matplotlib.pyplot as plt
+import numpy as np
+import os
+import torch
 
-from lc2st.lc2st import sbibm_clf_kwargs, lc2st_scores
 
-from tasks.jrnmm.prior import prior_JRNMM
-
-from lc2st.test_utils import precompute_t_stats_null
 from experiment_utils_jrnmm import (
     train_posterior_jrnmm,
     generate_observations,
     global_coverage_tests,
     local_coverage_tests,
 )
+from lc2st.lc2st import sbibm_clf_kwargs, lc2st_scores
+from lc2st.test_utils import precompute_t_stats_null
+from pathlib import Path
 from plots_lc2st2023 import (
     global_vs_local_tstats,
     plot_pairgrid_with_groundtruth_and_proba_intensity_lc2st,
     local_pp_plot,
 )
+from tasks.jrnmm.prior import prior_JRNMM
 
 # ====== GLOBAL PARAMETERS ======
 
@@ -107,10 +104,7 @@ parser.add_argument(
 
 # Experiment parameters
 parser.add_argument(
-    "--global_ct",
-    "-gct",
-    action="store_true",
-    help="Exp 1: Global Tests results.",
+    "--global_ct", "-gct", action="store_true", help="Exp 1: Global Tests results.",
 )
 
 parser.add_argument(
@@ -128,10 +122,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--plot",
-    "-p",
-    action="store_true",
-    help="Plot final figures only.",
+    "--plot", "-p", action="store_true", help="Plot final figures only.",
 )
 
 # ====== EXPERIMENTS ======
@@ -408,9 +399,9 @@ if args.plot:
 
             samples_z = npe_jrnmm._flow._distribution.sample(n_eval).detach()
             observation_emb = npe_jrnmm._flow._embedding_net(observation)
-            samples_theta = npe_jrnmm._flow._transform.inverse(samples_z, observation_emb)[
-                0
-            ].detach()
+            samples_theta = npe_jrnmm._flow._transform.inverse(
+                samples_z, observation_emb
+            )[0].detach()
 
             _, probas = lc2st_scores(
                 P=None,
@@ -425,10 +416,7 @@ if args.plot:
 
             # Pairplot with ground truth and Predicted Probability (PP) intensity
             fig = plot_pairgrid_with_groundtruth_and_proba_intensity_lc2st(
-                theta_gt=theta_gt,
-                probas=probas,
-                P_eval=samples_theta,
-                n_bins=20,
+                theta_gt=theta_gt, probas=probas, P_eval=samples_theta, n_bins=20,
             )
             plt.savefig(
                 PATH_EXPERIMENT / f"local_tests/pairplot_with_intensity_g_{g}.pdf"

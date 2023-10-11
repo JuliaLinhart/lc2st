@@ -18,10 +18,7 @@ def inv_flow_transform_obs(batch_theta, observation, flow):
 
 
 def sample_from_npe_obs(
-    npe,
-    observation,
-    n_samples=None,
-    base_dist_samples=None,
+    npe, observation, n_samples=None, base_dist_samples=None,
 ):
     if base_dist_samples is None and n_samples is None:
         raise ValueError("Either base_dist_samples or num_samples must be given")

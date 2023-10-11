@@ -1,9 +1,11 @@
-import torch
+# Code adapted from https://github.com/plcrodrigues/HNPE
+
 import numpy as np
-from sbi.utils import BoxUniform
+import rpy2.robjects as robjects
+import torch
 
 from rpy2.robjects.packages import importr
-import rpy2.robjects as robjects
+from sbi.utils import BoxUniform
 
 
 # setup all parameters
