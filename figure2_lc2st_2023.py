@@ -39,7 +39,7 @@ import numpy as np
 import torch
 import sbibm
 
-from valdiags.vanillaC2ST import sbibm_clf_kwargs
+from lc2st.vanillaC2ST import sbibm_clf_kwargs
 
 from precompute_test_statistics_null import precompute_t_stats_null
 from experiment_utils_sbibm import (

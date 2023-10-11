@@ -2,9 +2,9 @@ import os
 
 import torch
 
-from valdiags.vanillaC2ST import t_stats_c2st
-from valdiags.localC2ST import t_stats_lc2st
-from valdiags.localHPD import t_stats_lhpd
+from lc2st.vanillaC2ST import t_stats_c2st
+from lc2st.localC2ST import t_stats_lc2st
+from lc2st.localHPD import t_stats_lhpd
 
 
 def precompute_t_stats_null(

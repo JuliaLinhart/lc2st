@@ -34,7 +34,7 @@ from sklearn.discriminant_analysis import (
     QuadraticDiscriminantAnalysis,
 )
 from sklearn.neural_network import MLPClassifier
-from valdiags.vanillaC2ST import c2st_scores, t_stats_c2st
+from lc2st.vanillaC2ST import c2st_scores, t_stats_c2st
 
 from classifiers.optimal_bayes import (
     opt_bayes_scores,
@@ -43,7 +43,7 @@ from classifiers.optimal_bayes import (
 )
 
 from c2st_p_values_roc import c2st_p_values_tfpr
-from valdiags.test_utils import eval_htest
+from lc2st.test_utils import eval_htest
 
 from plots_lc2st2023 import plot_plot_c2st_single_eval_shift
 

@@ -36,7 +36,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
-from valdiags.localC2ST import sbibm_clf_kwargs, lc2st_scores
+from lc2st.localC2ST import sbibm_clf_kwargs, lc2st_scores
 
 from tasks.jrnmm.prior import prior_JRNMM
 
@@ -271,7 +271,7 @@ if args.local_ct_gain:
             kwargs_c2st=None,
         )
         # Compute pp_vals for local pp-plots for lc2st_nf
-        from valdiags.graphical_valdiags import PP_vals
+        from lc2st.graphical_valdiags import PP_vals
         import pandas as pd
 
         alphas = np.linspace(0, 1, 100)

@@ -28,7 +28,7 @@ import sbibm
 
 from pathlib import Path
 from scipy import stats
-from valdiags.vanillaC2ST import sbibm_clf_kwargs
+from lc2st.vanillaC2ST import sbibm_clf_kwargs
 from experiment_utils_sbibm import (
     generate_data_one_run,
     compute_test_results_npe_one_run,

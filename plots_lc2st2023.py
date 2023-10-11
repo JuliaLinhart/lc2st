@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 from tueplots import fonts, axes
 import matplotlib.gridspec as gridspec
-from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import cm
 
 import pandas as pd
@@ -12,7 +11,7 @@ import torch
 
 from scipy.stats import binom, uniform
 
-from valdiags.graphical_valdiags import (
+from lc2st.graphical_valdiags import (
     PP_vals,
     compute_dfs_with_probas_marginals,
     eval_space_with_proba_intensity,

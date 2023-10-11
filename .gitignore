@@ -10,7 +10,7 @@ sbi_logs/
 *.pyc
 *.DS_Store
 
-valdiags.egg-info/*
+lc2st.egg-info/*
 
 saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lc2st_nf_probas_nt_1000_n_cal_10000.pkl
 saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/probas_null_dict.pkl
