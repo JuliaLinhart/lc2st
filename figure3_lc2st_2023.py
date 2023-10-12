@@ -40,7 +40,8 @@ from experiment_utils_jrnmm import (
     global_coverage_tests,
     local_coverage_tests,
 )
-from lc2st.lc2st import sbibm_clf_kwargs, lc2st_scores
+from lc2st.lc2st import sbibm_clf_kwargs, lc2st_scores, t_stats_lc2st
+# from lc2st.lhpd import t_stats_lhpd
 from lc2st.test_utils import precompute_t_stats_null
 from pathlib import Path
 from plots_lc2st2023 import (
@@ -253,8 +254,10 @@ if args.local_ct_gain:
             t_stats_null_path=PATH_EXPERIMENT / "t_stats_null" / eval_params,
             methods=["lc2st_nf"],  # , "lhpd"],
             metrics=METRICS_LC2ST,
+            t_stats_fn_c2st=t_stats_lc2st,
+            # t_stats_fn_lhpd=t_stats_lhpd,
             kwargs_lc2st=kwargs_lc2st,
-            kwargs_lhpd=kwargs_lhpd,
+            # kwargs_lhpd=kwargs_lhpd,
             save_results=True,
             load_results=True,
             return_predicted_probas=True,

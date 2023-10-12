@@ -42,7 +42,7 @@ from experiment_utils_sbibm import (
     compute_rejection_rates_from_pvalues_over_runs_and_observations,
     compute_average_rejection_rates,
 )
-from lc2st.c2st import sbibm_clf_kwargs
+from lc2st.c2st import sbibm_clf_kwargs #, t_stats_c2st
 from pathlib import Path
 from plots_lc2st2023 import plot_sbibm_results_n_train_n_cal
 
@@ -301,6 +301,7 @@ t_stats_null_c2st_nf = {ncal: None for ncal in n_cal_list}
 #             n_trials_null=N_TRIALS_PRECOMPUTE,
 #             t_stats_null_path=task_path / "t_stats_null" / eval_params,
 #             methods=["c2st_nf"],
+#             t_stats_fn_c2st = t_stats_c2st,
 #             kwargs_c2st=kwargs_c2st,
 #             save_results=True,
 #             load_results=True,

@@ -11,8 +11,8 @@ from sklearn.utils import shuffle
 from scipy.stats import wasserstein_distance
 from tqdm import tqdm
 
-from .graphical_diagnostics import PP_vals
-from .test_utils import permute_data
+from lc2st.graphical_diagnostics import PP_vals
+from lc2st.test_utils import permute_data
 
 # define default classifier
 DEFAULT_CLF = MLPClassifier(alpha=0, max_iter=25000)

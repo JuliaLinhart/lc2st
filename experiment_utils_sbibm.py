@@ -112,6 +112,7 @@ def l_c2st_results_n_train(
             n_eval=n_eval,
             dim_theta=dim_theta,
             n_trials_null=n_trials_null_precompute,
+            t_stats_fn_lc2st=t_stats_lc2st,
             kwargs_lc2st=kwargs_lc2st,
             x_cal=x_cal,
             observation_dict=observation_dict,
@@ -120,7 +121,7 @@ def l_c2st_results_n_train(
             t_stats_null_path=t_stats_null_path,
             save_results=True,
             load_results=True,
-            # args only for c2st
+            # args only for lc2st
             kwargs_c2st=None,
             kwargs_lhpd=None,
         )["lc2st_nf"]
@@ -133,6 +134,7 @@ def l_c2st_results_n_train(
             n_eval=n_eval,
             dim_theta=dim_theta,
             n_trials_null=n_trials_null_precompute,
+            t_stats_fn_lhpd=t_stats_lhpd,
             kwargs_lhpd=kwargs_lhpd,
             x_cal=x_cal,
             observation_dict=observation_dict,
@@ -141,7 +143,7 @@ def l_c2st_results_n_train(
             t_stats_null_path=t_stats_null_path,
             save_results=True,
             load_results=True,
-            # args only for c2st and lc2st
+            # args only for lhpd
             kwargs_c2st=None,
             kwargs_lc2st=None,
         )["lhpd"]
@@ -571,6 +573,8 @@ def compute_emp_power_l_c2st(
                         n_eval=n_eval,
                         dim_theta=dim_theta,
                         n_trials_null=n_trials_null_precompute,
+                        t_stats_fn_lc2st=t_stats_lc2st,
+                        t_stats_fn_lhpd=t_stats_lhpd,
                         kwargs_lc2st=kwargs_lc2st_temp,
                         kwargs_lhpd=kwargs_lhpd_temp,
                         x_cal=x_cal,
