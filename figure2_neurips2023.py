@@ -27,6 +27,11 @@
 # >> python figure2_neurips2023.py --runtime -nt 0 --n_cal 5000 10000 --task slcp
 # >> python figure2_neurips2023.py --plot
 
+# To test the code locally:
+# - create a task folder named "test" with trained npe in `test/npe_100` (for a chosen task)
+# - run the following command:
+# >> python figure2_neurips2023.py --task test --n_train 100 --n_cal 100 --n_eval 100 -nt 2 --<experiment>
+
 # ====== Imports ======
 
 import argparse
@@ -83,11 +88,11 @@ METHODS_ALL = [
 ]
 
 # Numbers of the observations x_0 from sbibm to evaluate the tests at
-NUM_OBSERVATION_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+NUM_OBSERVATION_LIST = [1, 2 , 3, 4, 5, 6, 7, 8, 9, 10] # [1,2] when testing
 
 # Test parameters
 ALPHA = 0.05
-N_TRIALS_PRECOMPUTE = 100
+N_TRIALS_PRECOMPUTE = 100 # 2 when testing
 N_RUNS = 50
 NB_HPD_LEVELS = 11
 
@@ -152,6 +157,7 @@ parser.add_argument(
         "gaussian_mixture",
         "bernoulli_glm",
         "bernoulli_glm_raw",
+        "test",
     ],
     help="Task from sbibm to perform the experiment on.",
 )
@@ -195,13 +201,6 @@ parser.add_argument(
     "--plot", "-p", action="store_true", help="Plot results only.",
 )
 
-parser.add_argument(
-    "--box_plots",
-    "-b",
-    action="store_true",
-    help="Plot Box-plots for every observation.",
-)
-
 # ====== Experiments ======
 
 # Parse arguments
@@ -219,7 +218,11 @@ METHODS_ALL.append(r"oracle C2ST ($\hat{t}_{\mathrm{MSE}}$)")
 METHODS_ALL.append(r"oracle C2ST ($\hat{t}_{Acc}$)")
 
 # Define task and path
-task = sbibm.get_task(args.task)
+if args.task == "test":
+    task_name = "bernoulli_glm"
+else:
+    task_name = args.task
+task = sbibm.get_task(task_name)
 task_path = PATH_EXPERIMENT / args.task
 
 # SBI set-up for given task: prior, simulator, inference algorithm
@@ -228,7 +231,7 @@ simulator = task.get_simulator()
 algorithm = "npe"
 if algorithm != "npe":
     raise NotImplementedError("Only NPE is supported for now.")
-print(f"Task: {args.task} / Algorithm: {algorithm}")
+print(f"Task: {task_name} / Algorithm: {algorithm}")
 print()
 
 # Load observations
@@ -310,6 +313,8 @@ t_stats_null_c2st_nf = {ncal: None for ncal in n_cal_list}
 if args.t_res_ntrain:
     # Get experiment parameters
     n_cal = N_CAL_EXP1
+    if args.task == "test":
+        n_cal = 100
     n_train_list = args.n_train
 
     print()
@@ -393,6 +398,13 @@ if args.t_res_ntrain:
                 "lc2st_nf": {100: 50, 1000: 50, 10000: 50, 100000: 50},
                 "lhpd": {100: 50, 1000: 50, 10000: 50, 100000: 50},
             }
+        elif args.task == "test":
+            methods_dict = {
+                "c2st": {1000: 50},
+                "lc2st": {1000: 50},
+                "lc2st_nf": {1000: 50},
+                "lhpd": {1000: 50},
+            }
         else:
             raise NotImplementedError(f"Task {args.task} not implemented.")
 
@@ -405,6 +417,7 @@ if args.t_res_ntrain:
             "gausiian_linear_uniform": 50,
             "bernoulli_glm": 50,
             "bernoulli_glm_raw": 50,
+            "test": 2,
         }
         n_runs = n_runs_dict[args.task]
 
@@ -547,14 +560,6 @@ if args.power_ncal:
             "c2st": {100: 77, 500: 77, 1000: 77, 2000: 52, 5000: 56, 10000: 55,},
             "lc2st": {100: 100, 500: 100, 1000: 100, 2000: 100, 5000: 100, 10000: 50},
             "lc2st_nf": {100: 64, 500: 64, 1000: 64, 2000: 100, 5000: 62, 10000: 55},
-            # "lc2st_nf_perm": {
-            #     100: 64,
-            #     500: 64,
-            #     1000: 64,
-            #     2000: 100,
-            #     5000: 40,
-            #     10000: 16,
-            # },
             "lhpd": {100: 88, 500: 52, 1000: 50, 2000: 50, 5000: 50, 10000: 50,},
         }
     elif args.task == "gaussian_mixture":
@@ -585,6 +590,10 @@ if args.power_ncal:
             "lc2st_nf": {100: 50, 500: 50, 1000: 50, 2000: 50, 5000: 50, 10000: 50},
             "lhpd": {100: 50, 500: 50, 1000: 50, 2000: 50, 5000: 50, 10000: 50},
         }
+    elif args.task == "test":
+        methods_dict = {
+            "c2st": {100: 50},
+        }
     else:
         raise NotImplementedError(f"Task {args.task} not implemented.")
 
@@ -597,6 +606,7 @@ if args.power_ncal:
         "gausiian_linear_uniform": 50,
         "bernoulli_glm": 50,
         "bernoulli_glm_raw": 50,
+        "test": 2,
     }
     n_runs = n_runs_dict[args.task]
 
@@ -758,6 +768,9 @@ if args.runtime:
 
 # ====== PLOTS ONLY ======
 if args.plot:
+    if args.task == "test":
+        raise NotImplementedError("No plots for test task")
+
     # Path to save figures
     fig_path = (
         task_path
@@ -807,77 +820,3 @@ if args.plot:
         / f"results_ntrain_1000_n_cal_10000_bonferonni_{BONFERONNI}_mean_over_obs_{MEAN_OBS}_mean_over_runs_{MEAN_RUNS}.pdf"
     )
     plt.show()
-
-    if args.box_plots:
-        # Box plots to show variability over runs for each observation seperately
-        import seaborn as sns
-        import pandas as pd
-
-        # Dictionary to load results from a given run
-        # two moons
-        if args.task == "two_moons":
-            methods_dict = {
-                "c2st": {n: 100 for n in n_train_list},
-                "lc2st": {100: 65, 1000: 69, 10000: 56, 100000: 85},
-                "lc2st_nf": {100: 56, 1000: 50, 10000: 67, 100000: 66},
-                # "lc2st_nf_perm": {100: 56, 1000: 50, 10000: 35, 100000: 35},
-                "lhpd": {100: 52, 1000: 54, 10000: 53, 100000: 65},
-            }
-
-        # slcp
-        elif args.task == "slcp":
-            methods_dict = {
-                "c2st": {100: 59, 1000: 55, 10000: 76, 100000: 59,},
-                "lc2st": {100: 52, 1000: 50, 10000: 60, 100000: 94},
-                "lc2st_nf": {100: 52, 1000: 55, 10000: 54, 100000: 62},
-                # "lc2st_nf_perm": {100: 27, 1000: 16, 10000: 35, 100000: 37},
-                "lhpd": {100: 53, 1000: 50, 10000: 55, 100000: 50},
-            }
-        else:
-            raise NotImplementedError("Only two_moons and slcp are supported for now.")
-
-        n_runs = min(m[n] for m in methods_dict.values() for n in n_train_list)
-
-        emp_power_dict = torch.load(results_path / f"emp_power_dict_n_train.pkl")
-
-        sns.set_theme(style="ticks", palette="pastel")
-
-        for m in methods_dict.keys():
-            for t_stat_name in ALL_METRICS:
-                if "lc2st" in m and t_stat_name == "accuracy":
-                    continue
-                if "lhpd" in m and t_stat_name != "mse":
-                    continue
-                if t_stat_name == "div":
-                    continue
-                df = pd.DataFrame()
-                list_n_train = []
-                list_n_obs = []
-                list_tpr = []
-                for n_train in n_train_list:
-                    for n_obs in NUM_OBSERVATION_LIST:
-                        for n_r in range(n_runs):
-                            print(emp_power_dict[n_train][m][t_stat_name][n_r])
-                            list_n_train.append(n_train)
-                            list_n_obs.append(n_obs)
-                            list_tpr.append(
-                                emp_power_dict[n_train][m][t_stat_name][n_r][n_obs - 1]
-                            )
-                df["n_train"] = list_n_train
-                df["observation"] = list_n_obs
-                df["TPR"] = list_tpr
-
-                sns.boxplot(
-                    x="n_train",
-                    y="TPR",
-                    hue="observation",
-                    data=df,
-                    showmeans=True,
-                    meanline=True,
-                    meanprops={"linestyle": "--", "linewidth": 2, "color": "black"},
-                )
-                sns.despine(offset=10, trim=True)
-                plt.title(m + " " + t_stat_name)
-                plt.ylim(0, 1)
-                plt.savefig(task_path / "figures" / f"boxplot_{m}_{t_stat_name}.png")
-                plt.show()

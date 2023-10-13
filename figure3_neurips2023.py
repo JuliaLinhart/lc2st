@@ -25,6 +25,11 @@
 # >> python figure3_neurips2023.py --plot
 # >> python figure3_neurips2023.py --plot --lc2st_interpretability
 
+# To test the code locally:
+# - create a task folder named "test" with jrnmm_npe, joint_data and the observation folder
+# - run the following command:
+# >> python figure3_neurips2023.py --test --global_ct --local_ct_gain --n_cal 100 --n_eval 100 -nt 2
+
 # ====== Imports ======
 
 import argparse
@@ -127,10 +132,17 @@ parser.add_argument(
     "--plot", "-p", action="store_true", help="Plot final figures only.",
 )
 
+parser.add_argument(
+    "--test", "-t", action="store_true", help="Test if code runs.",
+)
+
 # ====== EXPERIMENTS ======
 
 # Parse arguments
 args = parser.parse_args()
+
+if args.test:
+    PATH_EXPERIMENT = PATH_EXPERIMENT / "test"
 
 print()
 print("=================================================")
@@ -153,7 +165,7 @@ prior = prior_JRNMM(
 try:
     npe_jrnmm = torch.load(PATH_EXPERIMENT / "posterior_estimator_jrnmm.pkl")
 except FileNotFoundError:
-    npe_jrnmm = train_posterior_jrnmm(N_TRAIN, PATH_EXPERIMENT)
+    npe_jrnmm = train_posterior_jrnmm(N_TRAIN)
     torch.save(npe_jrnmm, PATH_EXPERIMENT / "posterior_estimator_jrnmm.pkl")
 
 # Ground truth parameters used to generate observations x_0
@@ -255,13 +267,14 @@ if args.local_ct_gain:
             methods=["lc2st_nf"],  # , "lhpd"],
             metrics=METRICS_LC2ST,
             t_stats_fn_lc2st=t_stats_lc2st,
-            # t_stats_fn_lhpd=t_stats_lhpd,
+            t_stats_fn_lhpd=None,  # t_stats_lhpd,
             kwargs_lc2st=kwargs_lc2st,
-            # kwargs_lhpd=kwargs_lhpd,
+            kwargs_lhpd=None,  # kwargs_lhpd,
             save_results=True,
             load_results=True,
             return_predicted_probas=True,
             # args for lc2st only
+            t_stats_fn_c2st=None,
             kwargs_c2st=None,
         )
         # Compute pp_vals for local pp-plots for lc2st_nf
@@ -323,6 +336,9 @@ if args.local_ct_gain:
 # ====== PLOTS ONLY ======
 
 if args.plot:
+
+    if args.test:
+        raise NotImplementedError("No plots when testing.")
     # Path to save figures
     fig_path = PATH_EXPERIMENT / "figures"
     if not os.path.exists(fig_path):

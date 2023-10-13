@@ -122,6 +122,8 @@ def l_c2st_results_n_train(
             save_results=True,
             load_results=True,
             # args only for lc2st
+            t_stats_fn_c2st=None,
+            t_stats_fn_lhpd=None,
             kwargs_c2st=None,
             kwargs_lhpd=None,
         )["lc2st_nf"]
@@ -144,6 +146,8 @@ def l_c2st_results_n_train(
             save_results=True,
             load_results=True,
             # args only for lhpd
+            t_stats_fn_c2st=None,
+            t_stats_fn_lc2st=None,
             kwargs_c2st=None,
             kwargs_lc2st=None,
         )["lhpd"]
@@ -585,6 +589,7 @@ def compute_emp_power_l_c2st(
                         save_results=False,
                         load_results=False,
                         # args only for c2st
+                        t_stats_fn_c2st=None,
                         kwargs_c2st=None,
                     )[m]
 
@@ -1421,7 +1426,6 @@ def compute_test_results_npe_one_run(
                         # kwargs for t_stats_estimator
                         x_eval=observation,
                         P_eval=P_eval_obs[num_observation],
-                        Q_eval=None,
                         use_permutation=True,
                         n_trials_null=n_trials_null,
                         return_probas=False,

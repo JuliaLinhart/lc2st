@@ -204,8 +204,7 @@ def lc2st_scores(
         for clf_n in clf_list:
             if P_eval is None:
                 raise ValueError(
-                    "If cross_val=False and in-sample=False, at least P_eval must be provided.\
-                    In this case an out-of-sample evaluation is performed (single-class if Q_eval=None)."
+                    "If cross_val=False and in-sample=False, at P_eval must be provided."
                 )
 
             accuracy, proba = eval_lc2st(P=P_eval, x_eval=x_eval, clf=clf_n,)
