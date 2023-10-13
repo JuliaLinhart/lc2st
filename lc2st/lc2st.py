@@ -12,6 +12,7 @@ from .c2st import (
     eval_c2st,
     compute_metric,
 )
+
 from .test_utils import permute_data
 
 # define default classifier
@@ -61,13 +62,13 @@ def train_lc2st(P, Q, x_P, x_Q, clf=DEFAULT_CLF):
     return clf
 
 
-def eval_lc2st(P, x_eval, clf, Q=None, single_class_eval=True):
+def eval_lc2st(P, x_eval, clf):
     """Evaluates a classifier trained on data from the joint distributions
 
         - P,x
         - Q,x
 
-    at a fixed observation x=x_eval.
+    at a fixed observation x=x_eval on conditional data from class 0 (P|x_eval) only.
 
     This function is built on the `eval_c2st`, adapting it to evaluate conditional
     ditributions at a fixed observation x_eval. By default, we only evaluate on P.
@@ -80,8 +81,6 @@ def eval_lc2st(P, x_eval, clf, Q=None, single_class_eval=True):
     Args:
         P (numpy.array): data drawn from P|x_eval (or just P if independent of x)
             of size (n_samples, dim).
-        Q (numpy.array): data drawn from Q|x_eval (or just Q if independent of x)
-            of size (n_samples, dim).
         x_eval (numpy.array): a fixed observation
             of size (n_features,).
         clf (sklearn model, optional): needs to have a methods `.score(X,y)` and `.predict_proba(X)`.
@@ -93,16 +92,9 @@ def eval_lc2st(P, x_eval, clf, Q=None, single_class_eval=True):
     """
     # concatenate P with repeated x_eval to match training data format
     P_x_eval = np.concatenate([P, x_eval.repeat(len(P), 1)], axis=1)
-    if Q is not None:
-        Q_x_eval = np.concatenate([Q, x_eval.repeat(len(Q), 1)], axis=1)
-    else:
-        Q_x_eval = None
-        single_class_eval = True  # if Q is None, we can only evaluate on P
 
     # evaluate the classifier: accuracy and predicted probabilities for class 0 (P|x_eval)
-    accuracy, proba = eval_c2st(
-        P=P_x_eval, Q=Q_x_eval, clf=clf, single_class_eval=single_class_eval
-    )
+    accuracy, proba = eval_c2st(P=P_x_eval, Q=None, clf=clf, single_class_eval=True)
 
     return accuracy, proba
 
@@ -123,11 +115,9 @@ def lc2st_scores(
     x_Q,
     x_eval,
     P_eval=None,
-    Q_eval=None,
     metrics=["accuracy"],
     clf_class=MLPClassifier,
     clf_kwargs={"alpha": 0, "max_iter": 25000},
-    single_class_eval=True,
     cross_val=True,
     n_folds=10,
     n_ensemble=1,
@@ -137,19 +127,19 @@ def lc2st_scores(
 ):
     """Computes the scores of a classifier
         - trained on data from the joint distributions P,x and Q,x
-        - evaluated on data from the conditional distributions P|x and/or Q|x
+        - evaluated on data from the conditional distribution P|x of class 0 only
         at a fixed observation x=x_eval.
 
     They represent the test statistics of the local C2ST test between P|x and Q|x at x=x_eval.
 
-    If at least one of the classes (P or Q) is independent of x, we don't need extra data
-    P_eval and/or Q_eval during cross-validation. We can directly use the validation split of
-    P and/or Q to evaluate the classifier. This is the default behavior.
+    This method is designed for settings like in SBI, where we only have access to to data from
+    the joint distribution and the conditional (posterior) estimator, but generally do not have
+    access to data from the class representing the true posterior.
 
-    By default, we only evaluate on P|x: `single_class_eval` is set to `True`.
-    This is typically the case in SBI, where we generally do not have access to data from the
-    class representing the true posterior.
-
+    If at least one of the classes (P or Q) is independent of x (e.g. base distribution of a
+    normalizing flow), we don't need extra data P_eval and/or Q_eval during cross-validation.
+    We can directly use the validation split of P and/or Q to evaluate the classifier.
+    This is the default behaviour.
 
     Args:
         P (numpy.array): data drawn from P
@@ -166,17 +156,12 @@ def lc2st_scores(
             of size (n_test_samples, dim).
             Has to be provided if P is not independent of x.
             Defaults to None.
-        Q_eval (numpy.array, optional): data drawn from Q|x_eval (or just Q if independent of x)
-            of size (n_test_samples, dim).
-            Defaults to None.
         metrics (list of str, optional): list of metric names to compute.
             Defaults to ["accuracy"].
         clf_class (sklearn model class, optional): the class of the lassifier to use.
             Defaults to MLPClassifier.
         clf_kwargs (dict, optional): the keyword arguments for the classifier.
             Defaults to {"alpha": 0, "max_iter": 25000}.
-        single_class_eval (bool, optional): whether to evaluate on P only (True) or on P and Q (False).
-            Defaults to True.
         cross_val (bool, optional): whether to perform cross-validation (True) or not (False).
             Defaults to True.
         n_folds (int, optional): number of folds for cross-validation.
@@ -223,13 +208,7 @@ def lc2st_scores(
                     In this case an out-of-sample evaluation is performed (single-class if Q_eval=None)."
                 )
 
-            accuracy, proba = eval_lc2st(
-                P=P_eval,
-                Q=Q_eval,
-                x_eval=x_eval,
-                clf=clf_n,
-                single_class_eval=single_class_eval,
-            )
+            accuracy, proba = eval_lc2st(P=P_eval, x_eval=x_eval, clf=clf_n,)
 
             ens_accuracies.append(accuracy)
             ens_probas.append(proba)
@@ -244,9 +223,9 @@ def lc2st_scores(
             if "accuracy" in m:
                 scores[m] = accuracy
             else:
-                scores[m] = compute_metric(
-                    probas, metrics=[m], single_class_eval=single_class_eval
-                )[m]
+                scores[m] = compute_metric(probas, metrics=[m], single_class_eval=True)[
+                    m
+                ]
 
     else:
         # initialize scores as dict of empty lists
@@ -275,39 +254,26 @@ def lc2st_scores(
                 )
             clf_list.append(clf_n)
 
-        if not eval:
-            return None, None, clf_list
-
-        # evaluate classifiers over cv-folds
-        for n, (train_index, val_index) in enumerate(cv_splits):
-            # get val split
-            P_val = P[val_index]  # ok if P is independent of x
-            if P_eval is not None:
-                P_val = P_eval[val_index]
-            if Q_eval is not None:
-                Q_val = Q_eval[val_index]
+            if not eval:
+                scores, probas = None, None
             else:
-                Q_val = None
+                P_val = P[val_index]  # ok if P is independent of x
+                if P_eval is not None:
+                    P_val = P_eval[val_index]
 
-            # eval n^th classifier
-            accuracy, proba = eval_lc2st(
-                P=P_val,
-                Q=Q_val,
-                x_eval=x_eval,
-                clf=clf_list[n],
-                single_class_eval=single_class_eval,
-            )
-            # compute metrics
-            for m in metrics:
-                if "accuracy" in m:
-                    scores[m].append(accuracy)
-                else:
-                    scores[m].append(
-                        compute_metric(
-                            proba, metrics=[m], single_class_eval=single_class_eval
-                        )[m]
-                    )
-            probas.append(proba)
+                # eval n^th classifier
+                accuracy, proba = eval_lc2st(P=P_val, x_eval=x_eval, clf=clf_list[n],)
+
+                for m in metrics:
+                    if "accuracy" in m:
+                        scores[m].append(accuracy)
+                    else:
+                        scores[m].append(
+                            compute_metric(proba, metrics=[m], single_class_eval=True)[
+                                m
+                            ]
+                        )
+                probas.append(proba)
 
     if return_clfs:
         return scores, probas, clf_list
@@ -322,7 +288,6 @@ def t_stats_lc2st(
     x_Q,
     x_eval,
     P_eval,
-    Q_eval=None,
     scores_fn=lc2st_scores,
     metrics=["mse"],
     trained_clfs=None,
@@ -347,11 +312,6 @@ def t_stats_lc2st(
     or we compute the test statistics for each trial using `lc2st_scores` on each element of the provided
     lists of null samples.
 
-    In sbi, we typically do not have access to data from both classes during evaluation, therefore we cannot
-    use the permutation method to simulate the null hypothesis as in the classical c2st setting.
-    This is why this method is not implemented here. (we could add it in the future if needed with a
-    statement "if Q_eval is not None: ... else: ...").
-
     Args:
         P (numpy.array): data drawn from P
             of size (n_samples, dim).
@@ -365,9 +325,6 @@ def t_stats_lc2st(
             of size (n_features,).
         P_eval (numpy.array): data drawn from P|x_eval (or just P if independent of x)
             of size (n_test_samples, dim).
-        Q_eval (numpy.array, optional): data drawn from Q|x_eval (or just Q if independent of x)
-            of size (n_test_samples, dim). If None, Q_eval, we only evaluate on P_eval (single_class_eval=True).
-            Defaults to None.
         scores_fn (function, optional): function to compute scores.
             Defaults to lc2st_scores.
         metrics (list, optional): list of metrics to compute.
@@ -419,7 +376,6 @@ def t_stats_lc2st(
             x_Q,
             x_eval,
             P_eval,
-            Q_eval,
             metrics=metrics,
             trained_clfs=trained_clfs,
             **kwargs,
@@ -462,12 +418,8 @@ def t_stats_lc2st(
                 Q_t = joint_Q_x_perm[:, : Q.shape[-1]]
                 x_Q_t = joint_Q_x_perm[:, Q.shape[-1] :]
 
-                # if P_eval and Q_eval are not None, permute them as well
-                if P_eval is not None and Q_eval is not None:
-                    P_eval_t, Q_eval_t = permute_data(P_eval, Q_eval, seed=t)
-                else:
-                    # does this make sense? using the same data for each trial?
-                    P_eval_t, Q_eval_t = P_eval, Q_eval
+                P_eval_t = P_eval
+
             # directly use the samples from P to test under the null hypothesis
             else:
                 if (list_P_null is None or list_x_P_null is None) and (
@@ -486,7 +438,6 @@ def t_stats_lc2st(
                     Q_t = list_P_null[n_trials_null + t]
                     x_Q_t = list_x_P_null[n_trials_null + t]
                     P_eval_t = list_P_eval_null[t]
-                    Q_eval_t = list_P_eval_null[n_trials_null + t]
 
             scores_t, proba_t, clf_t = scores_fn(
                 P=P_t,
@@ -495,7 +446,6 @@ def t_stats_lc2st(
                 x_Q=x_Q_t,
                 x_eval=x_eval,
                 P_eval=P_eval_t,
-                Q_eval=Q_eval_t,
                 metrics=metrics,
                 trained_clfs=trained_clfs_null[t],
                 return_clfs=True,
@@ -563,6 +513,6 @@ def lc2st_sbibm(
         metrics=[metric],
         clf_class=clf_class,
         clf_kwargs=clf_kwargs,
-        **kwargs,  # cross_val, n_folds, n_ensemble, P_eval, Q_eval, single_class_eval, ...
+        **kwargs,  # cross_val, n_folds, n_ensemble, P_eval
     )
     return torch.tensor([np.mean(scores[metric])])

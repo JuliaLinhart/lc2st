@@ -1,9 +1,9 @@
-# =============================================================================
+# ==================================================================================
 
-#   SCRIPT FOR SCATTER PLOTS OF TEST STATISTICS (MSE) FOR THE SBIBM TASKS
-#                           C2ST vs. L-C2ST(-NF)
+#   SCRIPT FOR FIGURE 6 in APPENDIX F.1:
+#   SCATTER PLOTS OF TEST STATISTICS (MSE) FOR THE SBIBM TASKS C2ST vs. L-C2ST(-NF)
 
-# =============================================================================
+# ==================================================================================
 
 # DESCRIPTION:
 # We compare the test statistics (MSE) of the C2ST and L-C2ST(-NF) methods for
@@ -165,17 +165,10 @@ eval_params = f"n_eval_{n_eval}_n_ensemble_{N_ENSEMBLE}_cross_val_{CROSS_VAL}"
 # Classifier parameters
 sbibm_kwargs = sbibm_clf_kwargs(ndim=dim_theta)
 
-# kwargs for c2st_scores function
-kwargs_c2st = {
+# kwargs for (l)c2st_scores function
+kwargs_l_c2st = {
     "cross_val": CROSS_VAL,
     "n_ensemble": N_ENSEMBLE,
-    "clf_kwargs": sbibm_kwargs,
-}
-# kwargs for lc2st_scores function
-kwargs_lc2st = {
-    "cross_val": CROSS_VAL,
-    "n_ensemble": N_ENSEMBLE,
-    "single_class_eval": True,
     "clf_kwargs": sbibm_kwargs,
 }
 
@@ -239,8 +232,8 @@ else:
             data_samples=data_samples,
             n_train=n_train,
             observation_dict=observation_dict,
-            kwargs_c2st=kwargs_c2st,
-            kwargs_lc2st=kwargs_lc2st,
+            kwargs_c2st=kwargs_l_c2st,
+            kwargs_lc2st=kwargs_l_c2st,
             kwargs_lhpd=kwargs_lhpd,
             n_trials_null=0,
             t_stats_null_c2st_nf=None,

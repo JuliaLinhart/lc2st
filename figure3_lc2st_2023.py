@@ -50,7 +50,6 @@ from plots_lc2st2023 import (
     local_pp_plot,
 )
 from tasks.jrnmm.prior import prior_JRNMM
-
 # ====== GLOBAL PARAMETERS ======
 
 # Set seed for reproducibility
@@ -196,7 +195,6 @@ eval_params = f"n_eval_{n_eval}_n_ensemble_{N_ENSEMBLE}_cross_val_{CROSS_VAL}"
 kwargs_lc2st = {
     "cross_val": CROSS_VAL,
     "n_ensemble": N_ENSEMBLE,
-    "single_class_eval": True,
     "clf_kwargs": sbibm_kwargs,
 }
 
@@ -254,7 +252,7 @@ if args.local_ct_gain:
             t_stats_null_path=PATH_EXPERIMENT / "t_stats_null" / eval_params,
             methods=["lc2st_nf"],  # , "lhpd"],
             metrics=METRICS_LC2ST,
-            t_stats_fn_c2st=t_stats_lc2st,
+            t_stats_fn_lc2st=t_stats_lc2st,
             # t_stats_fn_lhpd=t_stats_lhpd,
             kwargs_lc2st=kwargs_lc2st,
             # kwargs_lhpd=kwargs_lhpd,
