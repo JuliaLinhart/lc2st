@@ -20,10 +20,10 @@
 
 
 # USAGE:
-# >> python figure3_lc2st_2023.py --global_ct
-# >> python figure3_lc2st_2023.py --local_ct_gain
-# >> python figure3_lc2st_2023.py --plot
-# >> python figure3_lc2st_2023.py --plot --lc2st_interpretability
+# >> python figure3_neurips2023.py --global_ct
+# >> python figure3_neurips2023.py --local_ct_gain
+# >> python figure3_neurips2023.py --plot
+# >> python figure3_neurips2023.py --plot --lc2st_interpretability
 
 # ====== Imports ======
 
@@ -60,7 +60,7 @@ np.random.seed(RANDOM_SEED)
 torch.manual_seed(RANDOM_SEED)
 
 # Path to save results
-PATH_EXPERIMENT = Path("saved_experiments/lc2st_2023/exp_3")
+PATH_EXPERIMENT = Path("saved_experiments/neurips2023/exp_3")
 
 # Number of training samples for the NPE
 N_TRAIN = 50000

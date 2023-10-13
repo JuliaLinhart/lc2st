@@ -16,7 +16,7 @@
 #   - empirical: 100 randomly generated using prior and simulator
 
 # USAGE:
-# >> python figure6_lc2st_2023.py --task <> --observations <task/empirical> --method <lc2st/lc2st_nf>
+# >> python figure6_neurips2023.py --task <> --observations <task/empirical> --method <lc2st/lc2st_nf>
 
 
 import argparse
@@ -103,7 +103,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 # Task path
-PATH_EXPERIMENT = Path(f"saved_experiments/lc2st_2023/exp_2/{args.task}")
+PATH_EXPERIMENT = Path(f"saved_experiments/neurips2023/exp_2/{args.task}")
 
 # Get task (prior, simulator)
 task = sbibm.get_task(args.task)

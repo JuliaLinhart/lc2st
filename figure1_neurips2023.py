@@ -11,9 +11,9 @@
 #   - exp 2: Compute the empirical power under distribution shift for estimated classifier
 
 # USAGE:
-# >> python figure1_lc2st_2023.py --opt_bayes --t_shift
-# >> python figure1_lc2st_2023.py --power_shift
-# >> python figure1_lc2st_2023.py --plot
+# >> python figure1_neurips2023.py --opt_bayes --t_shift
+# >> python figure1_neurips2023.py --power_shift
+# >> python figure1_neurips2023.py --plot
 
 
 # ====== IMPORTS ======
@@ -46,7 +46,7 @@ from sklearn.neural_network import MLPClassifier
 # ====== GLOBAL PARAMETERS ======
 
 # Path to save/load the results
-PATH_EXPERIMENT = "saved_experiments/lc2st_2023/exp_1/"
+PATH_EXPERIMENT = "saved_experiments/neurips2023/exp_1/"
 
 # Data parameters
 N_SAMPLES_EVAL = 10_000  # N_v (validation set size - used to compute the test statistics for a trained classifier)

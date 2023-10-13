@@ -12,19 +12,19 @@ sbi_logs/
 
 lc2st.egg-info/*
 
-saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lc2st_nf_probas_nt_1000_n_cal_10000.pkl
-saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/probas_null_dict.pkl
-saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd*.pkl
-saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd_r_alphas_nt_1000_n_cal_10000.pkl
-saved_experiments/lc2st_2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd_stats_null_nt_1000_n_cal_10000.pkl
-saved_experiments/lc2st_2023/exp_3/local_tests/alpha_0.05_n_trials_null_1000/n_eval_10000_n_ensemble_1_cross_val_False/*lhpd*.pkl
+saved_experiments/neurips2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lc2st_nf_probas_nt_1000_n_cal_10000.pkl
+saved_experiments/neurips2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/probas_null_dict.pkl
+saved_experiments/neurips2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd*.pkl
+saved_experiments/neurips2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd_r_alphas_nt_1000_n_cal_10000.pkl
+saved_experiments/neurips2023/exp_3/t_stats_null/n_eval_10000_n_ensemble_1_cross_val_False/lhpd_stats_null_nt_1000_n_cal_10000.pkl
+saved_experiments/neurips2023/exp_3/local_tests/alpha_0.05_n_trials_null_1000/n_eval_10000_n_ensemble_1_cross_val_False/*lhpd*.pkl
 
-saved_experiments/lc2st_2023/exp_2/*/figures/*
-saved_experiments/lc2st_2023/exp_2/*/t_stats_null/*
-saved_experiments/lc2st_2023/exp_2/*/npe_*/t_stats_null/*
-saved_experiments/lc2st_2023/exp_2/*/npe_*/results/*
-saved_experiments/lc2st_2023/exp_2/*/scatter_plots/data*.pkl
+saved_experiments/neurips2023/exp_2/*/figures/*
+saved_experiments/neurips2023/exp_2/*/t_stats_null/*
+saved_experiments/neurips2023/exp_2/*/npe_*/t_stats_null/*
+saved_experiments/neurips2023/exp_2/*/npe_*/results/*
+saved_experiments/neurips2023/exp_2/*/scatter_plots/data*.pkl
 
-saved_experiments/lc2st_2023/exp_1/t_stats_null/*
-saved_experiments/lc2st_2023/exp_1/figures/*
+saved_experiments/neurips2023/exp_1/t_stats_null/*
+saved_experiments/neurips2023/exp_1/figures/*
 

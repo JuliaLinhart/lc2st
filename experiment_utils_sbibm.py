@@ -1669,10 +1669,10 @@ if __name__ == "__main__":
 
     task = sbibm.get_task("slcp")
     npe = torch.load(
-        "saved_experiments/lc2st_2023/exp_2/slcp/npe_100/posterior_estimator.pkl"
+        "saved_experiments/neurips2023/exp_2/slcp/npe_100/posterior_estimator.pkl"
     ).flow
     joint_samples = torch.load(
-        "saved_experiments/lc2st_2023/exp_2/slcp/joint_samples_n_cal_10000.pkl"
+        "saved_experiments/neurips2023/exp_2/slcp/joint_samples_n_cal_10000.pkl"
     )
     x, theta = joint_samples["x"][:100], joint_samples["theta"][:100]
     observation = task.get_observation(1)

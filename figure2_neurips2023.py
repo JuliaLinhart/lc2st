@@ -21,11 +21,11 @@
 #   - exp 3: run-time for computing the test statistic for one observation (at fixed N_cal and N_train)
 
 # USAGE:
-# >> python figure2_lc2st_2023.py --t_res_ntrain --n_train 100 1000 10000 100000
-# >> python figure2_lc2st_2023.py --t_res_ntrain --n_train 100 1000 10000 100000 --power_ntrain
-# >> python figure2_lc2st_2023.py --power_ncal --n_cal 100 500 1000 2000 5000 10000
-# >> python figure2_lc2st_2023.py --runtime -nt 0 --n_cal 5000 10000 --task slcp
-# >> python figure2_lc2st_2023.py --plot
+# >> python figure2_neurips2023.py --t_res_ntrain --n_train 100 1000 10000 100000
+# >> python figure2_neurips2023.py --t_res_ntrain --n_train 100 1000 10000 100000 --power_ntrain
+# >> python figure2_neurips2023.py --power_ncal --n_cal 100 500 1000 2000 5000 10000
+# >> python figure2_neurips2023.py --runtime -nt 0 --n_cal 5000 10000 --task slcp
+# >> python figure2_neurips2023.py --plot
 
 # ====== Imports ======
 
@@ -54,7 +54,7 @@ np.random.seed(RANDOM_SEED)
 torch.manual_seed(RANDOM_SEED)
 
 # Path to save results
-PATH_EXPERIMENT = Path("saved_experiments/lc2st_2023/exp_2")
+PATH_EXPERIMENT = Path("saved_experiments/neurips2023/exp_2")
 
 # Methods to compare (labels for plots)
 METHODS_ACC = [
