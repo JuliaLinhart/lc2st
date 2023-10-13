@@ -44,7 +44,7 @@ from experiment_utils_sbibm import (
 )
 from lc2st.c2st import sbibm_clf_kwargs  # , t_stats_c2st
 from pathlib import Path
-from plots_lc2st2023 import plot_sbibm_results_n_train_n_cal
+from plots_neurips2023 import plot_sbibm_results_n_train_n_cal
 
 # ====== GLOBAL PARAMETERS ======
 

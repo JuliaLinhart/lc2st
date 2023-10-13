@@ -33,7 +33,7 @@ from c2st_p_values_roc import c2st_p_values_tfpr
 from functools import partial
 from lc2st.c2st import c2st_scores, t_stats_c2st
 from lc2st.test_utils import eval_htest
-from plots_lc2st2023 import plot_c2st_single_eval_shift
+from plots_neurips2023 import plot_c2st_single_eval_shift
 from scipy.stats import multivariate_normal as mvn
 from scipy.stats import t
 from sklearn.discriminant_analysis import (

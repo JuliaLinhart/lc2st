@@ -45,7 +45,7 @@ from lc2st.lc2st import sbibm_clf_kwargs, lc2st_scores, t_stats_lc2st
 # from lc2st.lhpd import t_stats_lhpd
 from lc2st.test_utils import precompute_t_stats_null
 from pathlib import Path
-from plots_lc2st2023 import (
+from plots_neurips2023 import (
     global_vs_local_tstats,
     plot_pairgrid_with_groundtruth_and_proba_intensity_lc2st,
     local_pp_plot,
