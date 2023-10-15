@@ -1,15 +1,15 @@
 # lc2st: local classifier two-sample tests
 This repo contains the official code for [L-C2ST: Local Diagnostics for Posterior Approximations in
-Simulation-Based Inference](https://arxiv.org/abs/2306.03580), 
+Simulation-Based Inference](https://arxiv.org/abs/2306.03580). 
 
-by Julia Linhart, Alexandre Gramfort, and Stefano Pedro L.C. Rodrigues. Published in NeurIPS 2023.
+Authors: Julia Linhart, Alexandre Gramfort and Pedro L.C. Rodrigues. Published in NeurIPS 2023.
 
 
 ## How to run the code
 
 ### Dependencies
 - Create a python 3.10 conda environment: `conda create -n lc2st python=3.10`
-- After cloning this repo, run the following to install the `lc2st` package and a subset of its dependencies (`lampe`, `sbi`, `sbibm`, `seaborn`, `tueplots`, `zuko`) as specified in `setup.py`:
+- Clone this repo and run the following to install the `lc2st` package and a subset of its dependencies (`lampe`, `sbi`, `sbibm`, `seaborn`, `tueplots`, `zuko`) as specified in `setup.py`:
 ```
 pip install -e .
 ```
