@@ -1,22 +1,30 @@
 # lc2st: local classifier two-sample tests
-Official code for [L-C2ST: Local Diagnostics for Posterior Approximations in
-Simulation-Based Inference](https://arxiv.org/abs/2306.03580)
+This repo contains the official code for [L-C2ST: Local Diagnostics for Posterior Approximations in
+Simulation-Based Inference](https://arxiv.org/abs/2306.03580), 
+
+by Julia Linhart, Alexandre Gramfort, and Stefano Pedro L.C. Rodrigues. Published in NeurIPS 2023.
 
 
-Dependencies:
-- conda environment: python 3.10
-- pip packages: `lampe`, `sbi`, `sbibm`, `seaborn`, `tueplots`, `zuko`
+## How to run the code
 
-Run `pip install -e .` within the `lc2st` folder. This will automatically install all dependencies.
+### Dependencies
+- Create a python 3.10 conda environment: `conda create -n lc2st python=3.10`
+- After cloning this repo, run the following to install the `lc2st` package and a subset of its dependencies (`lampe`, `sbi`, `sbibm`, `seaborn`, `tueplots`, `zuko`) as specified in `setup.py`:
+```
+pip install -e .
+```
 
-=================================================================================
-
-Special requirements for the `bernoulli_glm_(raw)` tasks:
-- intall the `pypolyagamma` package (or clone it from [this repo](https://github.com/slinderman/pypolyagamma/tree/master) making required changes in the `deps` folder)
-- clone and modify the `sbibm` repository: `pip install -e .` in the cloned folder after changing the `task.py` file as follows:
+### Special requirements
+The following dependencies are only required to run experiments for the `Bernoulli GLM (Raw)` task from `sbibm`.  
+- `pypolyagamma`: clone [the repo](https://github.com/slinderman/pypolyagamma/tree/master) and make required changes in the `deps` folder
+- `sbibm`: clone [the repo](https://github.com/sbi-benchmark/sbibm) and change the `task.py` file as follows:
   - add `observation: Optional[torch.Tensor] = None,` as an input variable to the `_sample_reference_posterior` method
   - change `dtype=np.int` to `int` in line 245
 
+After making these changes, run `pip install -e .` in both repository directories.
+
+### Getting Started 
+A detailed tutorial on `lc2st` will be uploaded soon. Until then see the code to reproduce results and figures from the paper.
 
 ## Repoduce Results and Figures
 
