@@ -1,8 +1,9 @@
-# lc2st: local classifier two-sample tests
+# lc2st: local classifier two-sample test
 This repo contains the official code for [L-C2ST: Local Diagnostics for Posterior Approximations in
-Simulation-Based Inference](https://arxiv.org/abs/2306.03580). 
+Simulation-Based Inference](https://arxiv.org/abs/2306.03580),\
+by Julia Linhart, Alexandre Gramfort and Pedro L.C. Rodrigues. Published in NeurIPS 2023.
 
-Authors: Julia Linhart, Alexandre Gramfort and Pedro L.C. Rodrigues. Published in NeurIPS 2023.
+A more practical (and maintained) implementation of `lc2st` can be found within the [`sbi` python package](https://github.com/sbi-dev/sbi), including an [introductory tutorial](https://github.com/sbi-dev/sbi/blob/main/tutorials/18_diagnostics_lc2st.ipynb) on how to use and interpret these validation diagnostics.
 
 
 ## How to run the code
